@@ -196,7 +196,7 @@ void loop() {
   pid(0.45,600);
   tournerDroite(0.3,90);
   pid(0.45,290);
-  tournerGauche(0.3,42);
+  tournerGauche(0.3,45);
   pid(0.45,200);
   tournerDroite(0.3,88);
   pid(0.45,340);
