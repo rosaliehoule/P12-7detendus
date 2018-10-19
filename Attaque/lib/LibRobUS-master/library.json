@@ -1,0 +1,26 @@
+{
+    "name":"LibRobus",
+    "description":"Library for Université de Sherbrooke robot",
+    "keywords":"robus",
+    "authors":
+    [
+      {
+        "name": "Jean-Samuel Lauzon",
+        "maintainer": true
+      },
+      {
+        "name": "Jonathan Vincent"
+      },
+      {
+        "name": "Serge Caron",
+        "maintainer": true
+      }
+  
+    ],
+    "dependencies":
+    [
+      {"name": "Adafruit INA219"},
+      {"name": "LiquidCrystal_I2C"}
+    ],
+    "version": "1.0.3"
+  }
