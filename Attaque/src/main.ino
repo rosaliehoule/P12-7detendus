@@ -169,7 +169,7 @@ void move_on_line()
 
 /*
  * @Nom : setup()
- * @Brief : fonction d'initialisation
+ * @Brief : fonction d'initialisation, appeler avant la fonction loop()
  * @Entré : void
  * @Sortie : void
  */
