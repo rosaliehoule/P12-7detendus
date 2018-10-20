@@ -13,12 +13,12 @@
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
 
 /*
- * @Nom : pid
- * @Brief : 
+ * @Nom : move
+ * @Brief : fonction qui utilise un pid pour déplacé le robot
  * @Entré : double vitesse, double distance
  * @Sortie : void
  */
-void go(double vitesse, double distance){
+void move(double vitesse, double distance){
   
   double KPB=0.2;
   double KIB=0.02;
@@ -56,14 +56,16 @@ void go(double vitesse, double distance){
   MOTOR_SetSpeed(1,0);
 }
 
-/*
- * @Nom : 
- * @Brief :
+/*  
+ * Pour les deux fonctions suivantes:
  *  empatement = 18.8 cm
  *  3.281218894 mm/deg
  *  0.023038563 deg/pulse
- * @Entré : 
- * @Sortie : 
+ *
+ * @Nom : turn_R()
+ * @Brief : on déplace le robot vers la droite
+ * @Entré : double vitesse , double angle
+ * @Sortie : void
  */
 void turn_R(double vitesse , double angle)
 {
@@ -77,10 +79,10 @@ void turn_R(double vitesse , double angle)
 }
 
 /*
- * @Nom : 
- * @Brief :
- * @Entré : 
- * @Sortie : 
+ * @Nom : turn_L()
+ * @Brief : on déplace le robot vers la gauche
+ * @Entré : double vitesse , double angle
+ * @Sortie : void
  */
 void turn_L(double vitesse , double angle)
 {
@@ -94,10 +96,10 @@ void turn_L(double vitesse , double angle)
 }
 
 /*
- * @Nom : 
- * @Brief :
- * @Entré : 
- * @Sortie : 
+ * @Nom : turn_180()
+ * @Brief : on fait faire un 180 au robot
+ * @Entré : double vitesse
+ * @Sortie : void
  */
 void turn_180(double vitesse)
 {
@@ -176,10 +178,10 @@ void setup(){
 }
 
 /*
- * @Nom : 
- * @Brief :
- * @Entré : 
- * @Sortie : 
+ * @Nom : loop()
+ * @Brief : Boucle principal, le Main de l'Arduino
+ * @Entré : void
+ * @Sortie : void
  */
 void loop() {
 
