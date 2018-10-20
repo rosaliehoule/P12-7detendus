@@ -121,10 +121,55 @@ void turn_180(double vitesse)
 }
 
 /*
- * @Nom : 
- * @Brief :
- * @Entré : 
- * @Sortie : 
+ * @Nom : get_line()
+ * @Brief : va chercher l'état des capteurs de ligne, on dispose de 
+ *          3 capteurs un à côté de l'autre, on retourne un int qui 
+ *          représante un nombre binaire a 3 bites.
+ * @Entré : void 
+ * @Sortie : on retourne un int qui représante un nombre binaire a 
+ *           3 bites, chaque bite représante un capteur, EX: 2 
+ *           (010 en binaire) = la ligne est détecté au centre.
+ */
+int get_line()
+{
+  return 2; // 2 = 010
+}
+
+/*
+ * @Nom : detect_line()
+ * @Brief : fonction pour detecté quand on croise une ligne sur le 
+ *          parcoure
+ * @Entré : void
+ * @Sortie : void
+ */
+void detect_line()
+{
+  if(get_line() != 0)
+    move_on_line();
+}
+
+/*
+ * @Nom : move_on_line()
+ * @Brief : une fois un ligne détecté on bouge le robot sur la ligne
+ * @Entré : void
+ * @Sortie : void
+ */
+void move_on_line()
+{
+  if(get_line() != 2)
+  {
+    if(get_line() == 1)
+      turn_L(0.3, 1);
+    else 
+      turn_R(0.3, 1);
+  }
+}
+
+/*
+ * @Nom : setup()
+ * @Brief : fonction d'initialisation
+ * @Entré : void
+ * @Sortie : void
  */
 void setup(){
   BoardInit();
@@ -137,20 +182,6 @@ void setup(){
  * @Sortie : 
  */
 void loop() {
-  turn_180(0.3);
-  turn_180(0.3);
-
-  go(0.3, 500);
-  turn_R(0.3, 90);
-
-  go(0.3, 500);
-  turn_R(0.3, 90);
-
-  go(0.3, 500);
-  turn_R(0.3, 90);
-
-  go(0.3, 500);
-  turn_R(0.3, 90);
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(100);// Delais pour décharger le CPU
