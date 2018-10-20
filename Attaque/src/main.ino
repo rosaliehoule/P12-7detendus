@@ -18,7 +18,7 @@
  * @Entré : double vitesse, double distance
  * @Sortie : void
  */
-void pid(double vitesse, double distance){
+void go(double vitesse, double distance){
   
   double KPB=0.2;
   double KIB=0.02;
@@ -59,57 +59,13 @@ void pid(double vitesse, double distance){
 /*
  * @Nom : 
  * @Brief :
- * @Entré : 
- * @Sortie : 
- */
-void pid2(double vitesse, double distance){
-  
-  double KPB=0.2;
-  double KIB=0.02;
-  double erreurTot=0;
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
- 
-  while(ENCODER_Read(0)*0.075594573<distance*0.1)
-  {
-    MOTOR_SetSpeed(1,0.20+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-    MOTOR_SetSpeed(0,0.2+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-  }
-  MOTOR_SetSpeed(0,vitesse);
-  MOTOR_SetSpeed(1,vitesse);
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-  
-  while(distance*0.8>ENCODER_Read(0)*0.075594573&&distance*0.8>ENCODER_Read(1)*0.075594573)
-  {
-    double multiplicateur=1;
-    double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
-    erreurTot+=erreur;
-    multiplicateur+=(KPB*erreur+KIB*erreurTot);
-    MOTOR_SetSpeed(1,vitesse*multiplicateur);
-    delay(50);
-  }
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-  while(ENCODER_Read(0)*0.075594573<distance*0.1)
-  {
-    MOTOR_SetSpeed(1,0.20+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-    MOTOR_SetSpeed(0,0.20+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-  }
-  MOTOR_SetSpeed(0,0);
-  MOTOR_SetSpeed(1,0);
-}
-
-/*
- * @Nom : 
- * @Brief :
  *  empatement = 18.8 cm
  *  3.281218894 mm/deg
  *  0.023038563 deg/pulse
  * @Entré : 
  * @Sortie : 
  */
-void tournerDroite(double vitesse , double angle)
+void turn_R(double vitesse , double angle)
 {
   ENCODER_Reset(0);
   ENCODER_Reset(1);
@@ -126,7 +82,24 @@ void tournerDroite(double vitesse , double angle)
  * @Entré : 
  * @Sortie : 
  */
-void demiTour(double vitesse)
+void turn_L(double vitesse , double angle)
+{
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
+  while(angle>ENCODER_Read(1)*0.023038563)
+  {
+    MOTOR_SetSpeed(1,vitesse);
+    MOTOR_SetSpeed(0,0);
+  }
+}
+
+/*
+ * @Nom : 
+ * @Brief :
+ * @Entré : 
+ * @Sortie : 
+ */
+void turn_180(double vitesse)
 {
   ENCODER_Reset(1);
   ENCODER_Reset(0);
@@ -153,23 +126,6 @@ void demiTour(double vitesse)
  * @Entré : 
  * @Sortie : 
  */
-void tournerGauche(double vitesse , double angle)
-{
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-  while(angle>ENCODER_Read(1)*0.023038563)
-  {
-    MOTOR_SetSpeed(1,vitesse);
-    MOTOR_SetSpeed(0,0);
-  }
-}
-
-/*
- * @Nom : 
- * @Brief :
- * @Entré : 
- * @Sortie : 
- */
 void setup(){
   BoardInit();
 }
@@ -181,6 +137,20 @@ void setup(){
  * @Sortie : 
  */
 void loop() {
+  turn_180(0.3);
+  turn_180(0.3);
+
+  go(0.3, 500);
+  turn_R(0.3, 90);
+
+  go(0.3, 500);
+  turn_R(0.3, 90);
+
+  go(0.3, 500);
+  turn_R(0.3, 90);
+
+  go(0.3, 500);
+  turn_R(0.3, 90);
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(100);// Delais pour décharger le CPU
