@@ -134,7 +134,30 @@ void turn_180(double vitesse)
  */
 int get_line()
 {
-  return 2; // 2 = 010
+  int adc = analogRead(4);
+  int output = 0;
+
+  //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
+  float analog = adc * 5 / 1023;
+
+  /* on doit convertire notre valeur de tention 
+   * en bits, la valeur du 1er bit est 0.7v le 
+   * 2eim 1.4v et le 3eim 2.7v.
+   */
+
+  //1er bit
+  if (fmod(analog, 0.7) == 0)
+    output++;
+  
+  //2eim bit
+  if (fmod(analog, 1.4) == 0)
+    output += 2;
+
+  //3eim bit
+  if (fmod(analog, 2.7) == 0)
+    output += 4;
+
+  return output;
 }
 
 /*
@@ -184,6 +207,7 @@ void setup(){
  * @Sortie : void
  */
 void loop() {
+  
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(100);// Delais pour décharger le CPU
