@@ -134,28 +134,46 @@ void turn_180(double vitesse)
  */
 int get_line()
 {
-  int adc = analogRead(4);
+  int adc = analogRead(A4);
   int output = 0;
 
   //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
-  float analog = adc * 5 / 1023;
+  float analog = adc * (5.0 / 1023.0);
 
   /* on doit convertire notre valeur de tention 
-   * en bits, la valeur du 1er bit est 0.7v le 
-   * 2eim 1.4v et le 3eim 2.7v.
+   * en int (pour pouvoir l'analyser comme un byte),
+   * la valeur du 1er bit est 0.7v, le 2eim 1.4v 
+   * et le 3eim 2.7v.
    */
 
-  //1er bit
-  if (fmod(analog, 0.7) == 0)
-    output++;
-  
-  //2eim bit
-  if (fmod(analog, 1.4) == 0)
-    output += 2;
-
   //3eim bit
-  if (fmod(analog, 2.7) == 0)
+  if (analog - 2.7 >= 0)
+  {
     output += 4;
+    analog -= 2.7;
+  }
+
+  //2eim bit
+  if(analog - 1.4 >= 0)
+  {
+    output += 2;
+    analog -= 1.4;
+  }
+
+  //1er bit
+  if(analog - 0.7 >= -0.05)
+  {
+    output += 1;
+    analog -= 0.7;
+  }
+
+  //DEBUG PRINT
+  Serial.print("\n\r");
+  Serial.print("analogue ");
+  Serial.print(analog);
+  Serial.print("\n\r");
+  Serial.print("output");
+  Serial.print(output);
 
   return output;
 }
@@ -197,6 +215,7 @@ void move_on_line()
  * @Sortie : void
  */
 void setup(){
+  Serial.begin(9600);
   BoardInit();
 }
 
@@ -207,8 +226,8 @@ void setup(){
  * @Sortie : void
  */
 void loop() {
-  
+  get_line();
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
-  delay(100);// Delais pour décharger le CPU
+  delay(2000);// Delais pour décharger le CPU
 }
