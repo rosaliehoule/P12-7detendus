@@ -238,7 +238,7 @@ void loop() {
   if (ROBUS_IsBumper(2))
   {
     int choix = rand() % 3;
-    moveBack(-0.3, -50);
+    moveBack(0.3, 50);
 
     switch(choix)
     {
