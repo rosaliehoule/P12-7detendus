@@ -170,47 +170,8 @@ Fonctions de boucle infini (loop())
 // -> Se fait appeler perpetuellement suite au "setup"
 
 void loop() {
-  //while(ROBUS_IsBumper(3)==0)
-  //{}
-  //12A
-  pid(0.45,2110);
-  tournerGauche(0.3,85);
-  pid(0.45,330);
-  tournerDroite(0.3,90);
-  pid(0.45,325);
-  tournerDroite(0.3,90);
-  pid(0.45,340);
-  tournerGauche(0.3,85);
-  pid(0.45,200);
-  tournerDroite(0.3,40);
-  pid(0.45,290);
-  tournerGauche(0.3,90);
-  pid(0.45,650);
-  tournerDroite(0.3,52);
-  pid(0.45,1150);
-  demiTour(0.3);
-
-
-  pid2(0.40,1180);
-  tournerGauche(0.3,47);
-  pid(0.45,600);
-  tournerDroite(0.3,90);
-  pid(0.45,290);
-  tournerGauche(0.3,45);
-  pid(0.45,200);
-  tournerDroite(0.3,88);
-  pid(0.45,340);
-  tournerGauche(0.3,92);
-  pid(0.45,300);
-  tournerGauche(0.3,92);
-  pid(0.45,330);
-  tournerDroite(0.3,90);
-  pid(0.45,2110);
-
-
-  MOTOR_SetSpeed(0,0);
-  MOTOR_SetSpeed(1,0);
-  demiTour(0.3);
-  // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
-  delay(100);// Delais pour décharger le CPU
+  while(ROBUS_IsBumper(2)==0)
+  {}
+  
+  MOTOR_SetSpeed(0,0.3);
 }
