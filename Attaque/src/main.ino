@@ -18,39 +18,34 @@
  * @Entré : double vitesse, double distance
  * @Sortie : void
  */
-void move(double vitesse, double distance){
+void move(double vitesse)
+{
+  double KPB=0.2;
+  double multiplicateur=1;
+  double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
+  multiplicateur+=(KPB*erreur);
+  MOTOR_SetSpeed(1,vitesse*multiplicateur);
+  delay(50);
+}
+void moveBack(double vitesse, double distance){
   
   double KPB=0.2;
   double KIB=0.02;
   double erreurTot=0;
+  
+  MOTOR_SetSpeed(0,-vitesse);
+  MOTOR_SetSpeed(1,-vitesse);
   ENCODER_Reset(0);
   ENCODER_Reset(1);
   
-  while(ENCODER_Read(0)*0.075594573<distance*0.1)
-  {
-    MOTOR_SetSpeed(1,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-    MOTOR_SetSpeed(0,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-  }
-  MOTOR_SetSpeed(0,vitesse);
-  MOTOR_SetSpeed(1,vitesse);
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-  
-  while(distance*0.8>ENCODER_Read(0)*0.075594573&&distance*0.8>ENCODER_Read(1)*0.075594573)
+  while(-distance>ENCODER_Read(0)*0.075594573&&-distance>ENCODER_Read(1)*0.075594573)
   {
     double multiplicateur=1;
     double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
     erreurTot+=erreur;
     multiplicateur+=(KPB*erreur+KIB*erreurTot);
-    MOTOR_SetSpeed(1,vitesse*multiplicateur);
+    MOTOR_SetSpeed(1,-vitesse*multiplicateur);
     delay(50);
-  }
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-  while(ENCODER_Read(0)*0.075594573<distance*0.1)
-  {
-    MOTOR_SetSpeed(1,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-    MOTOR_SetSpeed(0,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
   }
   MOTOR_SetSpeed(0,0);
   MOTOR_SetSpeed(1,0);
@@ -238,12 +233,12 @@ void loop() {
   Serial.print(analog);
 
   /*
-  move(1, 100);
+  move(0.9);
 
   if (ROBUS_IsBumper(2))
   {
     int choix = rand() % 3;
-    move(-0.3, 50);
+    moveBack(-0.3, -50);
 
     switch(choix)
     {
@@ -259,6 +254,9 @@ void loop() {
 
       Serial.print("\n\r Choix pris par detect bumper : ");
       Serial.print(choix);
+      erreurTot=0;
+      ENCODER_Reset(0);
+      ENCODER_Reset(1);
     }
   }
   */
