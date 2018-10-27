@@ -62,8 +62,8 @@ else
 {
     while(ENCODER_Read(0)*0.075594573>-distance*0.1)
       {
-        MOTOR_SetSpeed(1,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-        MOTOR_SetSpeed(0,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+        MOTOR_SetSpeed(1,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
+        MOTOR_SetSpeed(0,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
       }
       MOTOR_SetSpeed(0,vitesse);
       MOTOR_SetSpeed(1,vitesse);
@@ -73,7 +73,7 @@ else
       while(-distance*0.8<ENCODER_Read(0)*0.075594573&&-distance*0.8<ENCODER_Read(1)*0.075594573)
       {
         double multiplicateur=1;
-        double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
+        double erreur=-1*(ENCODER_Read(0)-ENCODER_Read(1))/50;
 
         erreurTot+=erreur;
         multiplicateur+=(KPB*erreur+KIB*erreurTot);
@@ -84,8 +84,8 @@ else
       ENCODER_Reset(1);
       while(ENCODER_Read(0)*0.075594573>-distance*0.1)
       {
-        MOTOR_SetSpeed(1,-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-        MOTOR_SetSpeed(0,-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+        MOTOR_SetSpeed(1,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
+        MOTOR_SetSpeed(0,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
       }
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
