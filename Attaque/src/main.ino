@@ -25,6 +25,7 @@ void move(double vitesse)
   double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
   multiplicateur+=(KPB*erreur);
   MOTOR_SetSpeed(1,vitesse*multiplicateur);
+  MOTOR_SetSpeed(0,vitesse);
   delay(50);
 }
 void moveBack(double vitesse, double distance){
@@ -226,40 +227,35 @@ void setup(){
  * @Sortie : void
  */
 void loop() {
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
+  move(0.5);
+
   int adc = analogRead(A3);
   //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
-  float analog = adc * (5.0 / 1023.0);
-  Serial.print("\n\r");
-  Serial.print(analog);
+  float v1 = adc * (5.0 / 1023.0);
+  
+  adc = analogRead(A2);
+  //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
+  float v2 = adc * (5.0 / 1023.0);
 
-  /*
-  move(0.9);
-
-  if (ROBUS_IsBumper(2))
+  if (v1 >= 2.5 && v2 >= 2.5)
   {
-    int choix = rand() % 3;
-    moveBack(0.3, 50);
+    int angle = rand() % (270 + 1 + 90) - 90;
+    moveBack(0.3, 200);
+    turn_L(0.3, angle);
 
-    switch(choix)
-    {
-      case 1:
-        turn_180(0.3);
-        break;
-      case 2:
-        turn_L(0.3, 90);
-        break;
-      case 3:
-        turn_R(0.3, 90);
-        break;
+    Serial.print("\n\r Numero de la decision prise: ");
+    Serial.print(angle);
 
-      Serial.print("\n\r Choix pris par detect bumper : ");
-      Serial.print(choix);
-      erreurTot=0;
-      ENCODER_Reset(0);
-      ENCODER_Reset(1);
-    }
+    ENCODER_Reset(0);
+    ENCODER_Reset(1);
   }
-  */
+  else if(v1 >= 2.5)
+  {
+    Serial.print("\n\r Ballon detecte ");
+    turn_180(1);
+  }
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(100);// Delais pour décharger le CPU
