@@ -122,6 +122,14 @@ void turn_180(double vitesse)
   }
 }
 
+int get_distance(int pin)
+{
+  int adc = analogRead(pin);
+
+  //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
+  float analog = adc * (5.0 / 1023.0);
+}
+
 /*
  * @Nom : get_line()
  * @Brief : va chercher l'état des capteurs de ligne, on dispose de 
@@ -161,18 +169,13 @@ int get_line()
   }
 
   //1er bit
-  if(analog - 0.7 >= -0.05)
+  if(analog - 0.7 >= -0.5)
   {
     output += 1;
     analog -= 0.7;
   }
 
-  //DEBUG PRINT
-  Serial.print("\n\r");
-  Serial.print("analogue ");
-  Serial.print(analog);
-  Serial.print("\n\r");
-  Serial.print("output");
+  Serial.print("\n\r Valeur retourne par get_line() : ");
   Serial.print(output);
 
   return output;
@@ -185,10 +188,12 @@ int get_line()
  * @Entré : void
  * @Sortie : void
  */
-void detect_line()
+bool detect_line()
 {
   if(get_line() != 0)
-    move_on_line();
+    return true;
+  else
+    return false;
 }
 
 /*
@@ -226,8 +231,38 @@ void setup(){
  * @Sortie : void
  */
 void loop() {
-  get_line();
+  int adc = analogRead(A3);
+  //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
+  float analog = adc * (5.0 / 1023.0);
+  Serial.print("\n\r");
+  Serial.print(analog);
+
+  /*
+  move(1, 100);
+
+  if (ROBUS_IsBumper(2))
+  {
+    int choix = rand() % 3;
+    move(-0.3, 50);
+
+    switch(choix)
+    {
+      case 1:
+        turn_180(0.3);
+        break;
+      case 2:
+        turn_L(0.3, 90);
+        break;
+      case 3:
+        turn_R(0.3, 90);
+        break;
+
+      Serial.print("\n\r Choix pris par detect bumper : ");
+      Serial.print(choix);
+    }
+  }
+  */
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
-  delay(2000);// Delais pour décharger le CPU
+  delay(100);// Delais pour décharger le CPU
 }
