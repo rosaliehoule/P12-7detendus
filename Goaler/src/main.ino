@@ -18,10 +18,17 @@
  * @Entré : double vitesse, double distance
  * @Sortie : void
  */
+
+int captG = A0;
+int captM = A1;
+int captD = A2; 
+
 void move(double vitesse, double distance){
   
-  double KPB=0.2;
+  double KPB=0.3;
   double KIB=0.02;
+  double KPB_back = 0.1;
+  double KIB_back = 0.02;
   double erreurTot=0;
   ENCODER_Reset(0);
   ENCODER_Reset(1);
@@ -29,42 +36,100 @@ void move(double vitesse, double distance){
   if (vitesse > 0)
   {
     while(ENCODER_Read(0)*0.075594573<distance*0.1)
-      {
-        MOTOR_SetSpeed(1,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-        MOTOR_SetSpeed(0,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+      { 
+        double multiplicateur=1;
+        double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
+        if (ROBUS_IsBumper(1) == true)
+        {
+          MOTOR_SetSpeed(0, 0);
+          MOTOR_SetSpeed(1, 0);
+        }
+        else
+        {
+          erreurTot+=erreur;
+          multiplicateur+=(KPB*erreur+KIB*erreurTot);
+          MOTOR_SetSpeed(1,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1))*multiplicateur);
+          MOTOR_SetSpeed(0,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+        }
+        delay(50);
       }
+
       MOTOR_SetSpeed(0,vitesse);
       MOTOR_SetSpeed(1,vitesse);
       ENCODER_Reset(0);
       ENCODER_Reset(1);
+      erreurTot=0;
       
       while(distance*0.8>ENCODER_Read(0)*0.075594573&&distance*0.8>ENCODER_Read(1)*0.075594573)
       {
         double multiplicateur=1;
         double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
 
-        erreurTot+=erreur;
-        multiplicateur+=(KPB*erreur+KIB*erreurTot);
-        MOTOR_SetSpeed(1,vitesse*multiplicateur);
+        if (ROBUS_IsBumper(1) == true)
+        {
+          MOTOR_SetSpeed(0, 0);
+          MOTOR_SetSpeed(1, 0);
+        }
+        else
+        {
+          erreurTot+=erreur;
+          multiplicateur+=(KPB*erreur+KIB*erreurTot);
+          MOTOR_SetSpeed(0, vitesse);
+          MOTOR_SetSpeed(1,vitesse*multiplicateur);
+        }
+
         delay(50);
       }
+      erreurTot=0;
       ENCODER_Reset(0);
       ENCODER_Reset(1);
       while(ENCODER_Read(0)*0.075594573<distance*0.1)
       {
-        MOTOR_SetSpeed(1,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-        MOTOR_SetSpeed(0,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+        double multiplicateur=1;
+        double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
+        if (ROBUS_IsBumper(1) == true)
+        {
+          MOTOR_SetSpeed(0, 0);
+          MOTOR_SetSpeed(1, 0);
+        }
+        else
+        {
+          erreurTot+=erreur;
+          multiplicateur+=(KPB*erreur+KIB*erreurTot);
+          MOTOR_SetSpeed(1,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1))*multiplicateur);
+          MOTOR_SetSpeed(0,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));          
+        }
+        delay(50);
       }
+      erreurTot=0;
+      ENCODER_Reset(1);
+      ENCODER_Reset(0);
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
     }
 else
 {
+    ENCODER_Reset(0);
+    ENCODER_Reset(1);
     while(ENCODER_Read(0)*0.075594573>-distance*0.1)
       {
-        MOTOR_SetSpeed(1,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
-        MOTOR_SetSpeed(0,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
+        double multiplicateur=1;
+        double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
+        if (ROBUS_IsBumper(1) == true)
+        {
+          MOTOR_SetSpeed(0, 0);
+          MOTOR_SetSpeed(1, 0);
+        }        
+        else
+        {
+          erreurTot+=erreur;
+          multiplicateur+=(KPB*erreur+KIB*erreurTot);
+          MOTOR_SetSpeed(1,-0.13+(vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))*multiplicateur));
+          MOTOR_SetSpeed(0,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
+        }
+        delay(50);
       }
+      erreurTot=0;
       MOTOR_SetSpeed(0,vitesse);
       MOTOR_SetSpeed(1,vitesse);
       ENCODER_Reset(0);
@@ -75,23 +140,128 @@ else
         double multiplicateur=1;
         double erreur=-1*(ENCODER_Read(0)-ENCODER_Read(1))/50;
 
-        erreurTot+=erreur;
-        multiplicateur+=(KPB*erreur+KIB*erreurTot);
-        MOTOR_SetSpeed(1,vitesse*multiplicateur);
+        if (ROBUS_IsBumper(1) == true)
+        {
+          MOTOR_SetSpeed(0, 0);
+          MOTOR_SetSpeed(1, 0);
+        }
+        else
+        {
+          erreurTot+=erreur;
+          multiplicateur+=(KPB_back*erreur+KIB_back*erreurTot);
+          MOTOR_SetSpeed(0, vitesse);
+          MOTOR_SetSpeed(1,vitesse*multiplicateur);
+        }
+
         delay(50);
       }
+      erreurTot=0;
       ENCODER_Reset(0);
       ENCODER_Reset(1);
       while(ENCODER_Read(0)*0.075594573>-distance*0.1)
       {
-        MOTOR_SetSpeed(1,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
-        MOTOR_SetSpeed(0,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
+        double multiplicateur=1;
+        double erreur=-1*(ENCODER_Read(0)-ENCODER_Read(1))/50;
+        if (ROBUS_IsBumper(1) == true)
+        {
+          MOTOR_SetSpeed(0, 0);
+          MOTOR_SetSpeed(1, 0);
+        }
+        else
+        {
+          erreurTot+=erreur;
+          multiplicateur+=(KPB_back*erreur+KIB_back*erreurTot);
+          MOTOR_SetSpeed(1,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)))*multiplicateur);
+          MOTOR_SetSpeed(0,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
+        }
+        delay(50);
       }
+      erreurTot=0;
+      ENCODER_Reset(0);
+      ENCODER_Reset(1);
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+  }
+}
+
+void suivre_ligne()
+{
+  int vitesse_grande = 0.5; 
+  int vitesse_petite = 0.1; 
+
+  while (analogRead(captM) > 2)
+  {
+    if (ROBUS_IsBumper(1))
+    {
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
     }
-}
+    else
+    {
+       if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+        {
+          vitesse_grande = vitesse_grande*(-1);
+          vitesse_petite = vitesse_petite*(-1);
+        }
+       MOTOR_SetSpeed(0, vitesse_petite);
+       MOTOR_SetSpeed(1, vitesse_grande);  
+    }
+  }
 
+  while (analogRead(captG) > 2)
+  { 
+    if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    {
+      if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+      {
+        vitesse_grande = vitesse_grande*(-1);
+        vitesse_petite = vitesse_petite*(-1);
+      }
+    }
+  }
+
+  while (analogRead(captM) < 2)
+  {
+    if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    {
+      if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+        {
+          vitesse_grande = vitesse_grande*(-1);
+          vitesse_petite = vitesse_petite*(-1);
+        }
+      MOTOR_SetSpeed(0, vitesse_grande);
+      MOTOR_SetSpeed(1, vitesse_petite);
+    }
+  }
+
+  while (analogRead(captD) > 2)
+  {
+    if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    {
+      if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+        {
+          vitesse_grande = vitesse_grande*(-1);
+          vitesse_petite = vitesse_petite*(-1);
+        }  
+    }
+    
+  }
+}
 
   
 
@@ -286,39 +456,6 @@ void setup(){
   BoardInit();
 }
 
-void avance(float distance)
-  {
-    while(distance > ENCODER_Read(0) * 0.075594573 || distance > ENCODER_Read(1) * 0.075594573)
-    {
-
-      //Arrete lorsqu'il y a un contact avec son bumber
-      if (ROBUS_IsBumper(1) == true)
-      {
-        MOTOR_SetSpeed(0, 0);
-        MOTOR_SetSpeed(1, 0);
-      }
-      else //S'il n'y a pas de contact, le robot recommence son mouvement
-      {
-        acceleration(0.3);
-        delay(100);
-      }  
-    }
-    while(ENCODER_Read(0) * 0.075594573 > 0 ||  ENCODER_Read(1) * 0.075594573 > 0)
-    {
-      
-      //Arrete lorsqu'il y a un contact avec son bumber
-      if (ROBUS_IsBumper(1) == true)
-      {
-        MOTOR_SetSpeed(0, 0);
-        MOTOR_SetSpeed(1, 0);
-      }
-      else //S'il n'y a pas de contact, le robot recommence son mouvement
-      {
-        acceleration(-0.3);
-        delay(100);
-      }  
-    }
-  }
 
 /*
  * @Nom : loop()
@@ -328,9 +465,9 @@ void avance(float distance)
  */
 void loop() {
 
-  move(0.30, 1500);
+  move(0.30, 600);
 
-  move(-0.30, 1500);
+  move(-0.30, 600);
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(1000);// Delais pour décharger le CPU
