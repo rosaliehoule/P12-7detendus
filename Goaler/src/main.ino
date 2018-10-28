@@ -18,10 +18,14 @@
  * @Entré : double vitesse, double distance
  * @Sortie : void
  */
-
-int captG = A0;
-int captM = A1;
-int captD = A2; 
+float siffletValue = 0;
+float ambiantValue = 0;
+int siffletPin = A0;
+int ambiantPin = A1;
+int captG = A2;
+int captM = A3;
+int captD = A4; 
+float noirValue = 50;
 
 void move(double vitesse, double distance){
   
@@ -186,12 +190,23 @@ else
 
 void suivre_ligne()
 {
-  int vitesse_grande = 0.5; 
-  int vitesse_petite = 0.1; 
+  float vitesse_grande = 0.5; 
+  float vitesse_petite = 0.1; 
+while(1)
+{
 
-  while (analogRead(captM) > 2)
+   while (analogRead(captM) > noirValue)
   {
-    if (ROBUS_IsBumper(1))
+    digitalWrite(13, LOW);
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue))
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
     {
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
@@ -208,9 +223,19 @@ void suivre_ligne()
     }
   }
 
-  while (analogRead(captG) > 2)
+  while (analogRead(captG) > noirValue)
   { 
-    if (ROBUS_IsBumper(1))
+    digitalWrite(13, LOW);
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue))
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+
+    }
+    else if (ROBUS_IsBumper(1))
     {
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
@@ -225,28 +250,48 @@ void suivre_ligne()
     }
   }
 
-  while (analogRead(captM) < 2)
+  while (analogRead(captM) < noirValue)
   {
-    if (ROBUS_IsBumper(1))
+    
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue) == true)
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
     {
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
     }
     else
-    {
+    { 
+      digitalWrite(13, HIGH);
       if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
-        {
-          vitesse_grande = vitesse_grande*(-1);
-          vitesse_petite = vitesse_petite*(-1);
-        }
+      {
+       
+        vitesse_grande = vitesse_grande*(-1);
+        vitesse_petite = vitesse_petite*(-1);
+      }
       MOTOR_SetSpeed(0, vitesse_grande);
       MOTOR_SetSpeed(1, vitesse_petite);
     }
   }
 
-  while (analogRead(captD) > 2)
+  while (analogRead(captD) < noirValue)
   {
-    if (ROBUS_IsBumper(1))
+    digitalWrite(13, HIGH);
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue) == true)
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
     {
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
@@ -254,13 +299,14 @@ void suivre_ligne()
     else
     {
       if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
-        {
-          vitesse_grande = vitesse_grande*(-1);
-          vitesse_petite = vitesse_petite*(-1);
-        }  
+      {
+        vitesse_grande = vitesse_grande*(-1);
+        vitesse_petite = vitesse_petite*(-1);
+      }  
     }
-    
   }
+}
+ 
 }
 
   
@@ -453,9 +499,46 @@ void acceleration(float vitesse)
  */
 void setup(){
   Serial.begin(9600);
+  
+  pinMode(13, OUTPUT); //DEL integree dans le arduino
+  pinMode(A1, INPUT); //pin du bruit ambiant
+  pinMode(A0, INPUT); //pin du sifflet+-
+  pinMode(A2,INPUT);
+  pinMode(A3,INPUT);
+  pinMode(A4,INPUT);
+  
   BoardInit();
 }
 
+/*
+ * @Nom : getAnalogValue()
+ * @Brief : Retourne la valeur analog de la pin
+ * @Entré : float analog
+ * @Sortie : float
+ */
+float getAnalogValue(int pinAnalog)
+{
+  float x = analogRead(pinAnalog);
+  return x;
+}
+
+/*
+ * @Nom : logiqueSifflet()
+ * @Brief : Retourne 0 ou 1
+ * @Entré : float Sifflet float ambiant
+ * @Sortie : bool
+ */
+bool logiqueSifflet(float siffletValue, float ambiantValue)
+{
+  if (siffletValue > ambiantValue)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
 
 /*
  * @Nom : loop()
@@ -464,11 +547,7 @@ void setup(){
  * @Sortie : void
  */
 void loop() {
-
-  move(0.30, 600);
-
-  move(-0.30, 600);
-
+  suivre_ligne();
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
-  delay(1000);// Delais pour décharger le CPU
+  delay(100);// Delais pour décharger le CPU
 }
