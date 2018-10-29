@@ -28,28 +28,79 @@ void move(double vitesse)
   MOTOR_SetSpeed(0,vitesse);
   delay(50);
 }
+
 void moveBack(double vitesse, double distance){
   
   double KPB=0.2;
   double KIB=0.02;
   double erreurTot=0;
-  
-  MOTOR_SetSpeed(0,-vitesse);
-  MOTOR_SetSpeed(1,-vitesse);
   ENCODER_Reset(0);
   ENCODER_Reset(1);
   
-  while(-distance>ENCODER_Read(0)*0.075594573&&-distance>ENCODER_Read(1)*0.075594573)
+  if (vitesse > 0)
   {
-    double multiplicateur=1;
-    double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
-    erreurTot+=erreur;
-    multiplicateur+=(KPB*erreur+KIB*erreurTot);
-    MOTOR_SetSpeed(1,-vitesse*multiplicateur);
-    delay(50);
-  }
-  MOTOR_SetSpeed(0,0);
-  MOTOR_SetSpeed(1,0);
+    while(ENCODER_Read(0)*0.075594573<distance*0.1)
+      {
+        MOTOR_SetSpeed(1,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+        MOTOR_SetSpeed(0,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+      }
+      MOTOR_SetSpeed(0,vitesse);
+      MOTOR_SetSpeed(1,vitesse);
+      ENCODER_Reset(0);
+      ENCODER_Reset(1);
+      
+      while(distance*0.8>ENCODER_Read(0)*0.075594573&&distance*0.8>ENCODER_Read(1)*0.075594573)
+      {
+        double multiplicateur=1;
+        double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
+
+        erreurTot+=erreur;
+        multiplicateur+=(KPB*erreur+KIB*erreurTot);
+        MOTOR_SetSpeed(1,vitesse*multiplicateur);
+        delay(50);
+      }
+      ENCODER_Reset(0);
+      ENCODER_Reset(1);
+      while(ENCODER_Read(0)*0.075594573<distance*0.1)
+      {
+        MOTOR_SetSpeed(1,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+        MOTOR_SetSpeed(0,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+      }
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+else
+{
+    while(ENCODER_Read(0)*0.075594573>-distance*0.1)
+      {
+        MOTOR_SetSpeed(1,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
+        MOTOR_SetSpeed(0,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
+      }
+      MOTOR_SetSpeed(0,vitesse);
+      MOTOR_SetSpeed(1,vitesse);
+      ENCODER_Reset(0);
+      ENCODER_Reset(1);
+      
+      while(-distance*0.8<ENCODER_Read(0)*0.075594573&&-distance*0.8<ENCODER_Read(1)*0.075594573)
+      {
+        double multiplicateur=1;
+        double erreur=-1*(ENCODER_Read(0)-ENCODER_Read(1))/50;
+
+        erreurTot+=erreur;
+        multiplicateur+=(KPB*erreur+KIB*erreurTot);
+        MOTOR_SetSpeed(1,vitesse*multiplicateur);
+        delay(50);
+      }
+      ENCODER_Reset(0);
+      ENCODER_Reset(1);
+      while(ENCODER_Read(0)*0.075594573>-distance*0.1)
+      {
+        MOTOR_SetSpeed(1,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
+        MOTOR_SetSpeed(0,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
+      }
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
 }
 
 /*  
@@ -229,7 +280,7 @@ void setup(){
 void loop() {
   ENCODER_Reset(0);
   ENCODER_Reset(1);
-  move(0.5);
+  move(0.1);
 
   int adc = analogRead(A3);
   //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
@@ -239,10 +290,10 @@ void loop() {
   //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
   float v2 = adc * (5.0 / 1023.0);
 
-  if (v1 >= 2.5 && v2 >= 2.5)
+  if (v2 >= 2.5)
   {
     int angle = rand() % (270 + 1 + 90) - 90;
-    moveBack(0.3, 200);
+    moveBack(-0.3, 200);
     turn_L(0.3, angle);
 
     Serial.print("\n\r Numero de la decision prise: ");
@@ -254,7 +305,7 @@ void loop() {
   else if(v1 >= 2.5)
   {
     Serial.print("\n\r Ballon detecte ");
-    turn_180(1);
+    turn_180(0.8);
   }
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
