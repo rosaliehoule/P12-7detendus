@@ -217,9 +217,18 @@ while(1)
         {
           vitesse_grande = vitesse_grande*(-1);
           vitesse_petite = vitesse_petite*(-1);
+          while (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+         {
+           MOTOR_SetSpeed(0, vitesse_petite);
+           MOTOR_SetSpeed(1, vitesse_grande);
+         } 
         }
-       MOTOR_SetSpeed(0, vitesse_petite);
-       MOTOR_SetSpeed(1, vitesse_grande);  
+        else
+        {
+          MOTOR_SetSpeed(0, vitesse_petite);
+          MOTOR_SetSpeed(1, vitesse_grande);
+        }
+        
     }
   }
 
@@ -246,6 +255,11 @@ while(1)
       {
         vitesse_grande = vitesse_grande*(-1);
         vitesse_petite = vitesse_petite*(-1);
+        while(ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+        {
+          MOTOR_SetSpeed(0, vitesse_petite);
+          MOTOR_SetSpeed(1, vitesse_grande);
+        }
       }
     }
   }
@@ -271,9 +285,13 @@ while(1)
       digitalWrite(13, HIGH);
       if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
       {
-       
         vitesse_grande = vitesse_grande*(-1);
         vitesse_petite = vitesse_petite*(-1);
+        while(ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+        {
+          MOTOR_SetSpeed(1, vitesse_petite);
+          MOTOR_SetSpeed(0, vitesse_grande);
+        }
       }
       MOTOR_SetSpeed(0, vitesse_grande);
       MOTOR_SetSpeed(1, vitesse_petite);
@@ -302,6 +320,11 @@ while(1)
       {
         vitesse_grande = vitesse_grande*(-1);
         vitesse_petite = vitesse_petite*(-1);
+        while(ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+        {
+          MOTOR_SetSpeed(1, vitesse_petite);
+          MOTOR_SetSpeed(0, vitesse_grande);
+        }
       }  
     }
   }
