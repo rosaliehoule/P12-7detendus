@@ -25,7 +25,7 @@ int ambiantPin = A1;
 int captG = A2;
 int captM = A3;
 int captD = A4; 
-float noirValue = 50;
+float noirValue = 80;
 
 void move(double vitesse, double distance){
   
@@ -186,12 +186,19 @@ else
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
   }
+  delay(100);
 }
 
-void suivre_ligne()
+
+
+
+
+
+
+int suivre_ligne()
 {
-  float vitesse_grande = 0.5; 
-  float vitesse_petite = 0.1; 
+  float vitesse_grande = 0.2; 
+  float vitesse_petite = 0.05; 
 while(1)
 {
 
@@ -213,15 +220,9 @@ while(1)
     }
     else
     {
-       if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+       if (ROBUS_IsBumper(2))
         {
-          vitesse_grande = vitesse_grande*(-1);
-          vitesse_petite = vitesse_petite*(-1);
-          while (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
-         {
-           MOTOR_SetSpeed(0, vitesse_petite);
-           MOTOR_SetSpeed(1, vitesse_grande);
-         } 
+          return 1;
         }
         else
         {
@@ -230,6 +231,7 @@ while(1)
         }
         
     }
+    delay(100);
   }
 
   while (analogRead(captG) > noirValue)
@@ -251,17 +253,12 @@ while(1)
     }
     else
     {
-      if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+      if (ROBUS_IsBumper(2))
       {
-        vitesse_grande = vitesse_grande*(-1);
-        vitesse_petite = vitesse_petite*(-1);
-        while(ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
-        {
-          MOTOR_SetSpeed(0, vitesse_petite);
-          MOTOR_SetSpeed(1, vitesse_grande);
-        }
+        return 1;
       }
     }
+    delay(100);
   }
 
   while (analogRead(captM) < noirValue)
@@ -283,19 +280,14 @@ while(1)
     else
     { 
       digitalWrite(13, HIGH);
-      if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+      if (ROBUS_IsBumper(2))
       {
-        vitesse_grande = vitesse_grande*(-1);
-        vitesse_petite = vitesse_petite*(-1);
-        while(ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
-        {
-          MOTOR_SetSpeed(1, vitesse_petite);
-          MOTOR_SetSpeed(0, vitesse_grande);
-        }
+        return 1;
       }
       MOTOR_SetSpeed(0, vitesse_grande);
       MOTOR_SetSpeed(1, vitesse_petite);
     }
+    delay(100);
   }
 
   while (analogRead(captD) < noirValue)
@@ -316,19 +308,293 @@ while(1)
     }
     else
     {
-      if (ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
+      if (ROBUS_IsBumper(2))
       {
-        vitesse_grande = vitesse_grande*(-1);
-        vitesse_petite = vitesse_petite*(-1);
-        while(ROBUS_IsBumper(2) || ROBUS_IsBumper(3))
-        {
-          MOTOR_SetSpeed(1, vitesse_petite);
-          MOTOR_SetSpeed(0, vitesse_grande);
-        }
+        return 1;
       }  
     }
+    delay(100);
   }
 }
+ 
+}
+
+int suivre_ligneBack()
+{
+  float vitesse_grande = -0.2; 
+  float vitesse_petite = -0.05; 
+while(1)
+{
+
+   while (analogRead(captM) > noirValue)
+  {
+    digitalWrite(13, LOW);
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue))
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    {
+       if (ROBUS_IsBumper(3))
+        {
+          return 1;
+        }
+        else
+        {
+          MOTOR_SetSpeed(0, vitesse_petite);
+          MOTOR_SetSpeed(1, vitesse_grande);
+        }
+        
+    }
+    delay(100);
+  }
+
+  while (analogRead(captG) > noirValue)
+  { 
+    digitalWrite(13, LOW);
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue))
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+
+    }
+    else if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    {
+      if (ROBUS_IsBumper(3))
+      {
+        return 1;
+      }
+      MOTOR_SetSpeed(0, vitesse_petite);
+      MOTOR_SetSpeed(1, vitesse_grande);
+    }
+    delay(100);
+  }
+
+  while (analogRead(captM) < noirValue)
+  {
+    
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue) == true)
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    { 
+      digitalWrite(13, HIGH);
+      if (ROBUS_IsBumper(3))
+      {
+        return 1;
+      }
+      MOTOR_SetSpeed(0, vitesse_grande);
+      MOTOR_SetSpeed(1, vitesse_petite);
+    }
+    delay(100);
+  }
+
+  while (analogRead(captD) < noirValue)
+  {
+    digitalWrite(13, HIGH);
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue) == true)
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    {
+      if (ROBUS_IsBumper(3))
+      {
+        return 1;
+      }   
+      MOTOR_SetSpeed(0, vitesse_grande);
+      MOTOR_SetSpeed(1, vitesse_petite);
+    }
+   
+    delay(100);
+  }
+}
+ 
+}
+
+
+
+
+
+
+int suivre_ligne2()
+{
+  float vitesse_grande = 0.5; 
+  float vitesse_petite = 0.0; 
+while(1)
+{ 
+    float TempsBase = millis();
+   while (analogRead(captM) > noirValue)
+  {
+    digitalWrite(13, LOW);
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue))
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    {
+       if (ROBUS_IsBumper(2)||TempsBase+10000<millis() )
+        {
+          return 1;
+        }
+        else
+        {
+          MOTOR_SetSpeed(0, vitesse_petite);
+          MOTOR_SetSpeed(1, vitesse_grande);
+        }
+        
+    }
+    delay(100);
+  }
+  TempsBase= millis();
+  while (analogRead(captM) < noirValue)
+  {
+    
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    
+     if (  logiqueSifflet(siffletValue, ambiantValue))
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    { 
+      digitalWrite(13, HIGH);
+      if (ROBUS_IsBumper(2)||TempsBase+10000<millis())
+      {
+        return 1;
+      }
+      MOTOR_SetSpeed(0, vitesse_grande);
+      MOTOR_SetSpeed(1, vitesse_petite);
+    }
+    delay(100);
+  }
+
+  
+  }
+ 
+}
+
+
+int suivre_ligne2Back()
+{
+  float vitesse_grande = -0.5; 
+  float vitesse_petite = 0; 
+while(1)
+{
+  float TempsBase = millis();
+   while (analogRead(captD) > noirValue)
+  {
+    digitalWrite(13, LOW);
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (logiqueSifflet(siffletValue, ambiantValue))
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    if (ROBUS_IsBumper(3)||TempsBase+10000<millis())
+    {
+      return 1;
+    }
+    else
+    {
+      MOTOR_SetSpeed(0, vitesse_petite);
+      MOTOR_SetSpeed(1, vitesse_grande);
+    }
+    delay(100);
+  }
+  TempsBase = millis();
+  while (analogRead(captD) < noirValue)
+  {
+    
+    siffletValue = getAnalogValue(A0);
+    ambiantValue = getAnalogValue(A1);
+    if (  logiqueSifflet(siffletValue, ambiantValue) == true)
+    {
+      MOTOR_SetSpeed(0, 0);
+      MOTOR_SetSpeed(1, 0);
+      delay(10000);
+    }
+    else if (ROBUS_IsBumper(1))
+    {
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+    }
+    else
+    { 
+      digitalWrite(13, HIGH);
+      if (ROBUS_IsBumper(3)||TempsBase+10000<millis())
+      {
+        return 1;
+      }
+      MOTOR_SetSpeed(0, vitesse_grande);
+      MOTOR_SetSpeed(1, vitesse_petite);
+    }
+    delay(100);
+  }
+
+  
+  }
  
 }
 
@@ -562,6 +828,29 @@ bool logiqueSifflet(float siffletValue, float ambiantValue)
     return false;
   }
 }
+/*
+ * @Nom : is_sifflet()
+ * @Brief : pause le robot 10 sec is on attend le signal
+ * @Entré : void
+ * @Sortie : void
+ */
+/*void is_sifflet()
+{
+  float siffletValue = get_v(4);
+  float ambiantValue = get_v(5);
+  
+  if (siffletValue > (ambiantValue + 0.1))
+  {
+    Serial.print("\n\r siffletValue: ");
+    Serial.print(siffletValue);
+    Serial.print("\n\r ambiantValue: ");
+    Serial.print(ambiantValue);
+
+    MOTOR_SetSpeed(0, 0);
+    MOTOR_SetSpeed(1, 0);
+    delay(10000);
+  }
+}*/
 
 /*
  * @Nom : loop()
@@ -570,7 +859,17 @@ bool logiqueSifflet(float siffletValue, float ambiantValue)
  * @Sortie : void
  */
 void loop() {
-  suivre_ligne();
+  while(!ROBUS_IsBumper(4))
+  {
+
+  }
+  delay(5000);
+  while(1)
+  {
+    suivre_ligne2();
+    suivre_ligne2Back();
+  }
+ 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(100);// Delais pour décharger le CPU
 }
