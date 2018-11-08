@@ -278,6 +278,7 @@ void setup(){
  * @Sortie : void
  */
 void loop() {
+  //gimme loop brother
   ENCODER_Reset(0);
   ENCODER_Reset(1);
   move(0.1);
