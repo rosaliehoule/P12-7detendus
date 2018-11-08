@@ -12,6 +12,46 @@
 //--- LISTE DES #INCLUDES ---//
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
 
+//--- LISTES DES VAR GLOBAL ---// 
+int etat_Affich = 0;
+
+/*
+ * @Nom : setup()
+ * @Brief : fonction d'initialisation, appeler avant la fonction loop()
+ * @Entré : void
+ * @Sortie : void
+ */
+void setup()
+{
+  Serial.begin(9600);
+  BoardInit();
+}
+
+/*
+ * @Nom : loop()
+ * @Brief : Boucle principal, le Main de l'Arduino
+ * @Entré : void
+ * @Sortie : void
+ */
+void loop() 
+{
+  if(get_ir() == "bas")
+    etat_Affich--;
+
+  // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
+  delay(100);// Delais pour décharger le CPU
+}
+
+char get_ir()
+{
+
+}
+
+void make_burger(char burger)
+{
+
+}
+
 /*
  * @Nom : move
  * @Brief : fonction qui utilise un pid pour déplacé le robot
@@ -29,7 +69,8 @@ void move(double vitesse)
   delay(50);
 }
 
-void moveBack(double vitesse, double distance){
+void moveBack(double vitesse, double distance)
+{
   
   double KPB=0.2;
   double KIB=0.02;
@@ -40,67 +81,67 @@ void moveBack(double vitesse, double distance){
   if (vitesse > 0)
   {
     while(ENCODER_Read(0)*0.075594573<distance*0.1)
-      {
-        MOTOR_SetSpeed(1,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-        MOTOR_SetSpeed(0,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-      }
-      MOTOR_SetSpeed(0,vitesse);
-      MOTOR_SetSpeed(1,vitesse);
-      ENCODER_Reset(0);
-      ENCODER_Reset(1);
-      
-      while(distance*0.8>ENCODER_Read(0)*0.075594573&&distance*0.8>ENCODER_Read(1)*0.075594573)
-      {
-        double multiplicateur=1;
-        double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
-
-        erreurTot+=erreur;
-        multiplicateur+=(KPB*erreur+KIB*erreurTot);
-        MOTOR_SetSpeed(1,vitesse*multiplicateur);
-        delay(50);
-      }
-      ENCODER_Reset(0);
-      ENCODER_Reset(1);
-      while(ENCODER_Read(0)*0.075594573<distance*0.1)
-      {
-        MOTOR_SetSpeed(1,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-        MOTOR_SetSpeed(0,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
-      }
-      MOTOR_SetSpeed(0,0);
-      MOTOR_SetSpeed(1,0);
+    {
+      MOTOR_SetSpeed(1,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+      MOTOR_SetSpeed(0,0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
     }
-else
-{
+    MOTOR_SetSpeed(0,vitesse);
+    MOTOR_SetSpeed(1,vitesse);
+    ENCODER_Reset(0);
+    ENCODER_Reset(1);
+    
+    while(distance*0.8>ENCODER_Read(0)*0.075594573&&distance*0.8>ENCODER_Read(1)*0.075594573)
+    {
+      double multiplicateur=1;
+      double erreur=(ENCODER_Read(0)-ENCODER_Read(1))/50;
+
+      erreurTot+=erreur;
+      multiplicateur+=(KPB*erreur+KIB*erreurTot);
+      MOTOR_SetSpeed(1,vitesse*multiplicateur);
+      delay(50);
+    }
+    ENCODER_Reset(0);
+    ENCODER_Reset(1);
+    while(ENCODER_Read(0)*0.075594573<distance*0.1)
+    {
+      MOTOR_SetSpeed(1,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+      MOTOR_SetSpeed(0,0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(distance*0.1)));
+    }
+    MOTOR_SetSpeed(0,0);
+    MOTOR_SetSpeed(1,0);
+  }
+  else
+  {
     while(ENCODER_Read(0)*0.075594573>-distance*0.1)
-      {
-        MOTOR_SetSpeed(1,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
-        MOTOR_SetSpeed(0,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
-      }
-      MOTOR_SetSpeed(0,vitesse);
-      MOTOR_SetSpeed(1,vitesse);
-      ENCODER_Reset(0);
-      ENCODER_Reset(1);
-      
-      while(-distance*0.8<ENCODER_Read(0)*0.075594573&&-distance*0.8<ENCODER_Read(1)*0.075594573)
-      {
-        double multiplicateur=1;
-        double erreur=-1*(ENCODER_Read(0)-ENCODER_Read(1))/50;
-
-        erreurTot+=erreur;
-        multiplicateur+=(KPB*erreur+KIB*erreurTot);
-        MOTOR_SetSpeed(1,vitesse*multiplicateur);
-        delay(50);
-      }
-      ENCODER_Reset(0);
-      ENCODER_Reset(1);
-      while(ENCODER_Read(0)*0.075594573>-distance*0.1)
-      {
-        MOTOR_SetSpeed(1,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
-        MOTOR_SetSpeed(0,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
-      }
-      MOTOR_SetSpeed(0,0);
-      MOTOR_SetSpeed(1,0);
+    {
+      MOTOR_SetSpeed(1,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
+      MOTOR_SetSpeed(0,-0.13+vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1)));
     }
+    MOTOR_SetSpeed(0,vitesse);
+    MOTOR_SetSpeed(1,vitesse);
+    ENCODER_Reset(0);
+    ENCODER_Reset(1);
+    
+    while(-distance*0.8<ENCODER_Read(0)*0.075594573&&-distance*0.8<ENCODER_Read(1)*0.075594573)
+    {
+      double multiplicateur=1;
+      double erreur=-1*(ENCODER_Read(0)-ENCODER_Read(1))/50;
+
+      erreurTot+=erreur;
+      multiplicateur+=(KPB*erreur+KIB*erreurTot);
+      MOTOR_SetSpeed(1,vitesse*multiplicateur);
+      delay(50);
+    }
+    ENCODER_Reset(0);
+    ENCODER_Reset(1);
+    while(ENCODER_Read(0)*0.075594573>-distance*0.1)
+    {
+      MOTOR_SetSpeed(1,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
+      MOTOR_SetSpeed(0,(-0.13+vitesse-vitesse*((ENCODER_Read(0)*0.075594573)/(-distance*0.1))));
+    }
+    MOTOR_SetSpeed(0,0);
+    MOTOR_SetSpeed(1,0);
+  }
 }
 
 /*  
@@ -258,57 +299,4 @@ void move_on_line()
     else 
       turn_R(0.3, 1);
   }
-}
-
-/*
- * @Nom : setup()
- * @Brief : fonction d'initialisation, appeler avant la fonction loop()
- * @Entré : void
- * @Sortie : void
- */
-void setup(){
-  Serial.begin(9600);
-  BoardInit();
-}
-
-/*
- * @Nom : loop()
- * @Brief : Boucle principal, le Main de l'Arduino
- * @Entré : void
- * @Sortie : void
- */
-void loop() {
-  //gimme loop brother
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-  move(0.1);
-
-  int adc = analogRead(A3);
-  //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
-  float v1 = adc * (5.0 / 1023.0);
-  
-  adc = analogRead(A2);
-  //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
-  float v2 = adc * (5.0 / 1023.0);
-
-  if (v2 >= 2.5)
-  {
-    int angle = rand() % (270 + 1 + 90) - 90;
-    moveBack(-0.3, 200);
-    turn_L(0.3, angle);
-
-    Serial.print("\n\r Numero de la decision prise: ");
-    Serial.print(angle);
-
-    ENCODER_Reset(0);
-    ENCODER_Reset(1);
-  }
-  else if(v1 >= 2.5)
-  {
-    Serial.print("\n\r Ballon detecte ");
-    turn_180(0.8);
-  }
-
-  // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
-  delay(100);// Delais pour décharger le CPU
 }
