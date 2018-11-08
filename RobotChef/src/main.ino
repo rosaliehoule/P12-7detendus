@@ -12,8 +12,18 @@
 //--- LISTE DES #INCLUDES ---//
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
 
+//--- LISTE DES #DEFINES---//
+
 //--- LISTES DES VAR GLOBAL ---// 
 int etat_Affich = 0;
+
+char menu[7][20] = {"Cheese Burger", 
+                    "Bacon Burger", 
+                    "Burger",
+                    "Setup",
+                    "1",
+                    "2",
+                    "3"};
 
 /*
  * @Nom : setup()
@@ -25,6 +35,7 @@ void setup()
 {
   Serial.begin(9600);
   BoardInit();
+  DisplayInit();
 }
 
 /*
@@ -35,21 +46,39 @@ void setup()
  */
 void loop() 
 {
-  if(get_ir() == "bas")
+  //gestion de déplacement dans le menu
+  if(get_ir() == "haut")
+  {
+    etat_Affich++;
+    if(etat_Affich == 7)
+      etat_Affich = 0;
+  }
+  else if(get_ir() == "bas")
+  {
     etat_Affich--;
+    if(etat_Affich == -1)
+      etat_Affich = 6;
+  }
 
-  // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
+  refresh_LCD();
   delay(100);// Delais pour décharger le CPU
 }
 
 char get_ir()
 {
-
+  
 }
 
 void make_burger(char burger)
 {
+  
+}
 
+void refresh_LCD()
+{
+  DISPLAY_Clear();
+  DISPLAY_SetCursor(0,0);
+  DISPLAY_Printf(menu[etat_Affich]);
 }
 
 /*
