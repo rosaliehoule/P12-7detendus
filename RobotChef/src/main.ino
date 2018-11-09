@@ -17,13 +17,7 @@
 //--- LISTES DES VAR GLOBAL ---// 
 int etat_Affich = 0;
 
-char menu[7][20] = {"Cheese Burger", 
-                    "Bacon Burger", 
-                    "Burger",
-                    "Setup",
-                    "1",
-                    "2",
-                    "3"};
+char menu[7][20] = {"Burger", "Bacon Burger", "Cheese Burger", "Setup", "1", "2", "3"};
 
 /*
  * @Nom : setup()
@@ -47,39 +41,110 @@ void setup()
 void loop() 
 {
   //gestion de déplacement dans le menu
-  if(get_ir() == "haut")
+  if(get_ir() == 'haut')
   {
     etat_Affich++;
     if(etat_Affich == 7)
       etat_Affich = 0;
   }
-  else if(get_ir() == "bas")
+  else if(get_ir() == 'bas')
   {
     etat_Affich--;
     if(etat_Affich == -1)
       etat_Affich = 6;
   }
 
+  if(get_ir() == 'enter')
+    make_burger((char) menu[etat_Affich]);
+
   refresh_LCD();
   delay(100);// Delais pour décharger le CPU
 }
 
+/// --- AFFICHAGE & MANETTE ---///
+
+/*
+ * @Nom : get_ir
+ * @Brief : trete les donnes recu par le capteur infrarouge et retourne la commande
+ * @Entré : void
+ * @Sortie : un char qui décrie la commande recu
+ */
 char get_ir()
 {
   
 }
 
-void make_burger(char burger)
-{
-  
-}
-
+/*
+ * @Nom : 
+ * @Brief :
+ * @Entré : 
+ * @Sortie : 
+ */
 void refresh_LCD()
 {
   DISPLAY_Clear();
   DISPLAY_SetCursor(0,0);
   DISPLAY_Printf(menu[etat_Affich]);
 }
+
+/// --- BURGER --- ///
+
+/*
+ * @Nom : make_burger 
+ * @Brief : 
+ * @Entré : 
+ * @Sortie : 
+ */
+void make_burger(char burger)
+{
+  switch(burger)
+  { 
+    case 'Burger':
+      burger1();
+      break;
+    case 'Cheese':
+      burger2();
+      break;
+    case 'Bacon':
+      burger3();
+      break;
+  }
+}
+
+/*
+ * @Nom : 
+ * @Brief :
+ * @Entré : 
+ * @Sortie : 
+ */
+void burger1()
+{
+
+}
+
+/*
+ * @Nom : 
+ * @Brief :
+ * @Entré : 
+ * @Sortie : 
+ */
+void burger2()
+{
+
+}
+
+/*
+ * @Nom : 
+ * @Brief :
+ * @Entré : 
+ * @Sortie : 
+ */
+void burger3()
+{
+
+}
+
+/// --- MOUVEMENT --- ///
 
 /*
  * @Nom : move
