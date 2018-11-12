@@ -1,0 +1,19 @@
+{
+    "name":"librairie_bras",
+    "description":"Librairie des mouvements du bras",
+    "keywords":"bras",
+    "authors":
+    [
+      {
+        "name": "Felix Thibault-Giguere"
+      },
+      {
+        "name": "Adam Martineau"
+      }
+    ],
+    "dependencies":
+    [
+      {"name": "LibRobus"}
+    ],
+    "version": "1.0.0"
+  }
