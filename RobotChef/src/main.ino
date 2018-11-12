@@ -11,6 +11,7 @@
 
 //--- LISTE DES #INCLUDES ---//
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
+#include <librairie_bras.h>
 
 //--- LISTE DES #DEFINES---//
 
