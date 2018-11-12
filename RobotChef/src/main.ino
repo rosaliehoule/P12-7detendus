@@ -16,8 +16,7 @@
 
 //--- LISTES DES VAR GLOBAL ---// 
 int etat_Affich = 0;
-
-char menu[7][20] = {"Burger", "Bacon Burger", "Cheese Burger", "Setup", "1", "2", "3"};
+char menu[4][20] = {"Burger", "Bacon Burger", "Cheese Burger", "Setup"};
 
 /*
  * @Nom : setup()
@@ -30,6 +29,7 @@ void setup()
   Serial.begin(9600);
   BoardInit();
   DisplayInit();
+  refresh_LCD();
 }
 
 /*
@@ -40,24 +40,29 @@ void setup()
  */
 void loop() 
 {
+  int remote = get_ir();
+
   //gestion de déplacement dans le menu
-  if(get_ir() == 'haut')
+  if(remote == 1)
   {
     etat_Affich++;
-    if(etat_Affich == 7)
+    if(etat_Affich == 4)
       etat_Affich = 0;
+    refresh_LCD();
   }
-  else if(get_ir() == 'bas')
+  else if(remote == 2)
   {
     etat_Affich--;
     if(etat_Affich == -1)
-      etat_Affich = 6;
+      etat_Affich = 3;
+    refresh_LCD();
+  }
+  else if(remote == 0)
+  {
+    menu_enter();
+    refresh_LCD();
   }
 
-  if(get_ir() == 'enter')
-    make_burger((char) menu[etat_Affich]);
-
-  refresh_LCD();
   delay(100);// Delais pour décharger le CPU
 }
 
@@ -69,9 +74,23 @@ void loop()
  * @Entré : void
  * @Sortie : un char qui décrie la commande recu
  */
-char get_ir()
-{
-  
+int get_ir()
+{ 
+  int retour = -1;
+  uint32_t remote = REMOTE_read();
+
+  if(remote == 0x6604CFC6) //haut
+    retour = 1;
+  else if(remote == 0x6604CFFA) //bas
+    retour = 2;
+  else if(remote == 0x6604CFD6) //gauche
+    retour = 3;
+  else if(remote == 0x6604CFE6) //droite
+    retour = 4;
+  else if(remote == 0x6604CFF6) //enter
+    retour = 0;
+
+  return retour;
 }
 
 /*
@@ -84,31 +103,26 @@ void refresh_LCD()
 {
   DISPLAY_Clear();
   DISPLAY_SetCursor(0,0);
-  DISPLAY_Printf(menu[etat_Affich]);
+  Serial.print("\n\r");
+  Serial.print(menu[etat_Affich]);
 }
 
 /// --- BURGER --- ///
 
 /*
- * @Nom : make_burger 
+ * @Nom : menu_enter
  * @Brief : 
  * @Entré : 
  * @Sortie : 
  */
-void make_burger(char burger)
+void menu_enter()
 {
-  switch(burger)
-  { 
-    case 'Burger':
-      burger1();
-      break;
-    case 'Cheese':
-      burger2();
-      break;
-    case 'Bacon':
-      burger3();
-      break;
-  }
+  if(etat_Affich == 0)
+    burger1();  
+  if(etat_Affich == 1)
+    burger2();  
+  if(etat_Affich == 2)
+    burger3();  
 }
 
 /*
@@ -119,7 +133,8 @@ void make_burger(char burger)
  */
 void burger1()
 {
-
+  Serial.print("\n\r");
+  Serial.print("creation du burger1");
 }
 
 /*
@@ -130,7 +145,8 @@ void burger1()
  */
 void burger2()
 {
-
+  Serial.print("\n\r");
+  Serial.print("creation du burger2");
 }
 
 /*
@@ -141,7 +157,8 @@ void burger2()
  */
 void burger3()
 {
-
+  Serial.print("\n\r");
+  Serial.print("creation du burger3");
 }
 
 /// --- MOUVEMENT --- ///
@@ -386,8 +403,7 @@ bool detect_line()
  */
 void move_on_line()
 {
-  if(get_line() != 2)
-  {
+  if(get_line() != 2)  {
     if(get_line() == 1)
       turn_L(0.3, 1);
     else 
