@@ -414,29 +414,3 @@ void move_on_line()
   }
 
 }
-
-/*
- * @Nom : setup()
- * @Brief : fonction d'initialisation, appeler avant la fonction loop()
- * @Entré : void
- * @Sortie : void
- */
-void setup(){
-  Serial.begin(9600);
-  BoardInit();
-}
-
-/*
- * @Nom : loop()
- * @Brief : Boucle principal, le Main de l'Arduino
- * @Entré : void
- * @Sortie : void
- */
-void loop() {
-  pince(true);
-  delay(500);
-  pince(false);
-  delay(500);
-  flip_bras(true);
-  delay(500);
-}
