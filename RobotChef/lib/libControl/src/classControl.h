@@ -1,8 +1,8 @@
-// libControl.cpp
+// classControl.cpp
 
 #include <LibRobus.h>
 
-class libControl
+class classControl
 {
     public:
         //--- LISTES DES VAR GLOBAL ---// 
@@ -62,7 +62,7 @@ class libControl
 };
 
 /// --- AFFICHAGE & MANETTE ---///
-void libControl::gestion_manette()
+void classControl::gestion_manette()
 {
     int remote = get_ir();
 
@@ -94,7 +94,7 @@ void libControl::gestion_manette()
 * @Entré : void
 * @Sortie : un char qui décrie la commande recu
 */
-int libControl::get_ir()
+int classControl::get_ir()
 { 
     int retour = -1;
     uint32_t remote = REMOTE_read();
@@ -119,7 +119,7 @@ int libControl::get_ir()
 * @Entré : 
 * @Sortie : 
 */
-void libControl::refresh_LCD()
+void classControl::refresh_LCD()
 {
     DISPLAY_Clear();
     DISPLAY_SetCursor(0,0);
@@ -133,7 +133,7 @@ void libControl::refresh_LCD()
 * @Entré : 
 * @Sortie : 
 */
-void libControl::menu_enter()
+void classControl::menu_enter()
 {
     if(etat_Affich == 0)
         burger1();  
@@ -149,7 +149,7 @@ void libControl::menu_enter()
 * @Entré : 
 * @Sortie : 
 */
-void libControl::burger1()
+void classControl::burger1()
 {
     Serial.print("\n\r");
     Serial.print("creation du burger1");
@@ -161,7 +161,7 @@ void libControl::burger1()
 * @Entré : 
 * @Sortie : 
 */
-void libControl::burger2()
+void classControl::burger2()
 {
     Serial.print("\n\r");
     Serial.print("creation du burger2");
@@ -173,7 +173,7 @@ void libControl::burger2()
 * @Entré : 
 * @Sortie : 
 */
-void libControl::burger3()
+void classControl::burger3()
 {
     Serial.print("\n\r");
     Serial.print("creation du burger3");
