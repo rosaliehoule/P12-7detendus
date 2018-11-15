@@ -13,6 +13,7 @@
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
 #include <librairie_bras.h>
 
+
 //--- LISTE DES #DEFINES---//
 
 //--- LISTES DES VAR GLOBAL ---// 
@@ -163,6 +164,7 @@ void burger3()
 }
 
 /// --- MOUVEMENT --- ///
+
 
 /*
  * @Nom : move
@@ -410,4 +412,31 @@ void move_on_line()
     else 
       turn_R(0.3, 1);
   }
+
+}
+
+/*
+ * @Nom : setup()
+ * @Brief : fonction d'initialisation, appeler avant la fonction loop()
+ * @Entré : void
+ * @Sortie : void
+ */
+void setup(){
+  Serial.begin(9600);
+  BoardInit();
+}
+
+/*
+ * @Nom : loop()
+ * @Brief : Boucle principal, le Main de l'Arduino
+ * @Entré : void
+ * @Sortie : void
+ */
+void loop() {
+  pince(true);
+  delay(500);
+  pince(false);
+  delay(500);
+  flip_bras(true);
+  delay(500);
 }
