@@ -11,6 +11,7 @@
 
 //--- LISTE DES #INCLUDES ---//
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
+#include <librairie_bras.h>
 
 /*
  * @Nom : move
@@ -278,37 +279,10 @@ void setup(){
  * @Sortie : void
  */
 void loop() {
-  //gimme loop brother
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-  move(0.1);
-
-  int adc = analogRead(A3);
-  //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
-  float v1 = adc * (5.0 / 1023.0);
-  
-  adc = analogRead(A2);
-  //on transforme la valeur de l'adc (de 0 a 1023) en volt (de 0 a 5)
-  float v2 = adc * (5.0 / 1023.0);
-
-  if (v2 >= 2.5)
-  {
-    int angle = rand() % (270 + 1 + 90) - 90;
-    moveBack(-0.3, 200);
-    turn_L(0.3, angle);
-
-    Serial.print("\n\r Numero de la decision prise: ");
-    Serial.print(angle);
-
-    ENCODER_Reset(0);
-    ENCODER_Reset(1);
-  }
-  else if(v1 >= 2.5)
-  {
-    Serial.print("\n\r Ballon detecte ");
-    turn_180(0.8);
-  }
-
-  // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
-  delay(100);// Delais pour décharger le CPU
+  pince(true);
+  delay(500);
+  pince(false);
+  delay(500);
+  flip_bras(true);
+  delay(500);
 }
