@@ -41,11 +41,11 @@ void flip_bras(bool p)
     SERVO_Enable(0);
     if(p)
     {
-        SERVO_SetAngle(0,0);
+        SERVO_SetAngle(0,123);
     }
     else
     {
-        SERVO_SetAngle(0,180);
+        SERVO_SetAngle(0,0);
     }   
 }
 void pince(bool p)
@@ -53,11 +53,11 @@ void pince(bool p)
     SERVO_Enable(1);
     if(p)
     {
-      SERVO_SetAngle(1,90);  
+      SERVO_SetAngle(1,85);  
     }
     else
     {
-        SERVO_SetAngle(1,0);
+        SERVO_SetAngle(1,170);
     }
     
 }
