@@ -7,10 +7,10 @@ class classControl
     public:
         //--- LISTES DES VAR GLOBAL ---// 
         int etat_Affich = 0;
-        char menu[4][20] = {"Burger", "Bacon Burger", "Cheese Burger", "Setup"};
+        char menu[4][20] = {"Burger", "Cheese Burger", "All Burger", "Setup"};
     
         /// --- AFFICHAGE & MANETTE ---///
-        void gestion_manette();
+        int gestion_manette();
         /*
         * @Nom : get_ir
         * @Brief : trete les donnes recu par le capteur infrarouge et retourne la commande
@@ -34,7 +34,7 @@ class classControl
         * @Entré : 
         * @Sortie : 
         */
-        void menu_enter();
+        int menu_enter();
 
         /*
         * @Nom : 
@@ -62,7 +62,7 @@ class classControl
 };
 
 /// --- AFFICHAGE & MANETTE ---///
-void classControl::gestion_manette()
+int classControl::gestion_manette()
 {
     int remote = get_ir();
 
@@ -83,9 +83,11 @@ void classControl::gestion_manette()
   }
   else if(remote == 0)
   {
-    menu_enter();
+    
     refresh_LCD();
+    return menu_enter();
   }
+  return -1;
 }
 
 /*
@@ -114,8 +116,8 @@ int classControl::get_ir()
 }
 
 /*
-* @Nom : 
-* @Brief :
+* @Nom : refresh_LCD
+* @Brief : enlève ce qui est écris sur l'écran et écrit ce qui est voulu
 * @Entré : 
 * @Sortie : 
 */
@@ -130,18 +132,18 @@ void classControl::refresh_LCD()
 /// --- BURGERS --- ///
 /*
 * @Nom : menu_enter
-* @Brief : 
+* @Brief : détermine l'option choisi
 * @Entré : 
-* @Sortie : 
+* @Sortie : option choisi (1 burger1, 2 burger2, 3 burger3)
 */
-void classControl::menu_enter()
+int classControl::menu_enter()
 {
     if(etat_Affich == 0)
-        burger1();  
+        return 1;  
     if(etat_Affich == 1)
-        burger2();  
+        return 2;  
     if(etat_Affich == 2)
-        burger3();  
+        return 3;  
 }
 
 /*
