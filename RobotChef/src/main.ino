@@ -32,6 +32,9 @@ void setup()
 
   pince(true);
   flip_bras(true);
+
+  delay(5000);
+  move.calibration();
 }
 
 /*
@@ -42,7 +45,6 @@ void setup()
  */
 void loop() 
 {
-  move.calibration();
   move.m_mouvement();
   classcontrol.gestion_manette();
   delay(25);// Delais pour décharger le CPU

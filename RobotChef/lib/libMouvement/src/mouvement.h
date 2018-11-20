@@ -149,5 +149,9 @@ void mouvement::calibration()
     threshold_1 = (a1 + a2)/2;
     threshold_2 = (b1 + b2)/2;
     threshold_3 = (c1 + c2)/2;
+
+    Serial.print("\n\r");
+    Serial.print("Calibration fini");
+
     delay(15000);
 }
