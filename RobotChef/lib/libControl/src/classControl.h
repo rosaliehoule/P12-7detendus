@@ -124,6 +124,7 @@ void classControl::refresh_LCD()
     DISPLAY_Clear();
     DISPLAY_SetCursor(0,0);
     DISPLAY_Printf(menu[etat_Affich]);
+    Serial.print(menu[etat_Affich]);
 }
 
 /// --- BURGERS --- ///

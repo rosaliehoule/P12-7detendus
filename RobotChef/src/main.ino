@@ -12,8 +12,10 @@
 //--- LISTE DES #INCLUDES ---//
 #include <librairie_bras.h>
 #include <classControl.h>
+#include <mouvement.h>
 
 classControl classcontrol;
+mouvement move;
 
 /*
  * @Nom : setup()
@@ -26,7 +28,10 @@ void setup()
   Serial.begin(9600);
   BoardInit();
   DisplayInit();
-  calsscontrol.refresh_LCD();
+  classcontrol.refresh_LCD();
+
+  pince(true);
+  flip_bras(true);
 }
 
 /*
@@ -37,6 +42,8 @@ void setup()
  */
 void loop() 
 {
+  move.calibration();
+  move.m_mouvement();
   classcontrol.gestion_manette();
-  delay(100);// Delais pour décharger le CPU
+  delay(25);// Delais pour décharger le CPU
 }
