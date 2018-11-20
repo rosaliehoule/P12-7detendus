@@ -33,7 +33,7 @@ void setup()
   pince(true);
   flip_bras(true);
 
-  delay(5000);
+  delay(10000);
   move.calibration();
 }
 

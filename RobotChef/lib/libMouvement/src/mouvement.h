@@ -132,7 +132,7 @@ void mouvement::calibration()
 {
     Serial.print("\n\r");
     Serial.print("Robot sur blanc");
-    delay(5000);
+    delay(10000);
 
     int a1 = analogRead(capt_1);
     int b1 = analogRead(capt_2);
@@ -140,7 +140,7 @@ void mouvement::calibration()
 
     Serial.print("\n\r");
     Serial.print("Robot sur noir");
-    delay(5000);
+    delay(10000);
 
     int a2 = analogRead(capt_1);
     int b2 = analogRead(capt_2);
