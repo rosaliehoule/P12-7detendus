@@ -13,6 +13,7 @@
 #include <librairie_bras.h>
 #include <classControl.h>
 #include <mouvement.h>
+#include<LibRobus.h>
 
 classControl classcontrol;
 mouvement move;
@@ -46,21 +47,21 @@ void setup()
 void loop() 
 {
   move.calibration();
-  int burgerChoisi=0;
+  int burgerChoisi;
   burgerChoisi = classcontrol.gestion_manette();
   switch(burgerChoisi)
   {
     case 1:
-    move.burger1;
-    break;
+      move.burger1();
+      break;
     case 2:
-    move.burger2;
-    break;
+      move.burger2();
+      break;
     case 3:
-    move.burger3;
-    break;
+      move.burger3();
+      break;
     default:
-    break;
+      break;
   }
   delay(25);// Delais pour décharger le CPU
 }
