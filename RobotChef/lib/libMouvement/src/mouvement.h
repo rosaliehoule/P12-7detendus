@@ -220,8 +220,7 @@ int mouvement::read()
         retourn += 2;
     if (analogRead(capt_1) <= threshold_1)
         retourn += 4;
-    Serial.print("\n\r");
-    Serial.print(retourn);
+
     return retourn;
 }
 
@@ -292,6 +291,8 @@ bool mouvement::detect_station(int bonneStation)
 */
 void mouvement::turn_station(bool direction)
 {
+    Serial.print("\n\r");
+    Serial.print("tourne");
     int moteurGauche;
     int moteurDroit;
     if(direction)
@@ -310,6 +311,8 @@ void mouvement::turn_station(bool direction)
     MOTOR_SetSpeed(0, moteurGauche);
     MOTOR_SetSpeed(1, moteurDroit);
     while(read() != 7){}
+    Serial.print("\n\r");
+    Serial.print("Tourne Fini");
 }
 /*
 * @Nom : mouvement_Station
