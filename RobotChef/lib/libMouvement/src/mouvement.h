@@ -215,7 +215,7 @@ int mouvement::read()
     int retourn = 0;
     
     if (analogRead(capt_3) <= threshold_3)
-            retourn += 1;
+        retourn += 1;
     if (analogRead(capt_2) <= threshold_2)
         retourn += 2;
     if (analogRead(capt_1) <= threshold_1)
@@ -245,7 +245,7 @@ void mouvement::avance()
 */
 void mouvement::alignement_d()
 {
-    moteur_d = vitesseRapide;
+    moteur_d = vitesseLent;
     moteur_g = vitesseRapide;
 }
 
