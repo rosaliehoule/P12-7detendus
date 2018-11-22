@@ -46,10 +46,9 @@ void setup()
  */
 void loop() 
 {
-  move.calibration();
   int burgerChoisi;
   burgerChoisi = classcontrol.gestion_manette();
-  switch(burgerChoisi)
+  /*switch(burgerChoisi)
   {
     case 1:
       move.burger1();
@@ -62,6 +61,7 @@ void loop()
       break;
     default:
       break;
-  }
+  }*/
+  move.burger_1();
   delay(25);// Delais pour décharger le CPU
 }

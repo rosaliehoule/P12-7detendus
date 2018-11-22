@@ -1,11 +1,12 @@
 #include <LibRobus.h>
 
+
 #define calib true
 
 #define capt_1 A9
 #define capt_2 A11
 #define capt_3 A12
-#define NBR_INGREDIENT 6
+#define NBR_INGREDIENT 1
 #define Pain 1
 #define Fromage 2
 #define Salade 3
@@ -35,6 +36,7 @@ class mouvement
         int threshold_1 = 200;
         int threshold_2 = 200;
         int threshold_3 = 130;
+        classControl lcd;
 
         bool fini =false;
 
@@ -50,9 +52,9 @@ class mouvement
         void calibration();
         int read();
 
-        void burger1();
-        void burger2();
-        void burger3();
+        void burger_1();
+        void burger_2();
+        void burger_3();
 
         void m_mouvement(int bonneStation);
         void avance();
@@ -77,12 +79,8 @@ class mouvement
 * @Entré : 
 * @Sortie : 
 */
-void mouvement::burger1()
+void mouvement::burger_1()
 {
-    fini=false;
-    m_mouvement(Pain);
-    fini=false;
-    m_mouvement(Boulette);
     fini=false;
     m_mouvement(Pain);
     fini=false;
@@ -94,7 +92,7 @@ void mouvement::burger1()
 * @Entré : 
 * @Sortie : 
 */
-void mouvement::burger2()
+void mouvement::burger_2()
 {
     fini=false;
     m_mouvement(Pain);
@@ -113,7 +111,7 @@ void mouvement::burger2()
 * @Entré : 
 * @Sortie : 
 */
-void mouvement::burger3()
+void mouvement::burger_3()
 {
     fini=false;
     m_mouvement(Pain);
@@ -217,12 +215,13 @@ int mouvement::read()
     int retourn = 0;
     
     if (analogRead(capt_3) <= threshold_3)
-        retourn += 1;
+            retourn += 1;
     if (analogRead(capt_2) <= threshold_2)
         retourn += 2;
     if (analogRead(capt_1) <= threshold_1)
         retourn += 4;
-
+    Serial.print("\n\r");
+    Serial.print(retourn);
     return retourn;
 }
 
@@ -310,7 +309,7 @@ void mouvement::turn_station(bool direction)
     delay(350);
     MOTOR_SetSpeed(0, moteurGauche);
     MOTOR_SetSpeed(1, moteurDroit);
-    while(read() != 2){}
+    while(read() != 7){}
 }
 /*
 * @Nom : mouvement_Station
@@ -361,6 +360,7 @@ void mouvement::mouvement_Station()
 void mouvement::calibration()
 {
     Serial.print("\n\r");
+
     Serial.print("Robot sur blanc");
     delay(10000);
 
@@ -383,7 +383,7 @@ void mouvement::calibration()
     Serial.print("\n\r");
     Serial.print("Calibration fini");
 
-    delay(15000);
+    delay(5000);
 }
 
 /*
