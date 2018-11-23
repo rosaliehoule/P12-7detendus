@@ -28,13 +28,11 @@ void setup()
 {
   Serial.begin(9600);
   BoardInit();
-  DisplayInit();
-  classcontrol.refresh_LCD();
+  //DisplayInit();
 
   pince(true);
   flip_bras(true);
 
-  delay(10000);
   move.calibration();
 }
 
@@ -46,8 +44,6 @@ void setup()
  */
 void loop() 
 {
-  int burgerChoisi;
-  burgerChoisi = classcontrol.gestion_manette();
   /*switch(burgerChoisi)
   {
     case 1:

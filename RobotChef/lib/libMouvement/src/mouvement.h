@@ -138,6 +138,8 @@ void mouvement::m_mouvement(int bonneStation)
 {
     while(!fini)
     {
+            Serial.print("\n\r");
+    Serial.print("fini");
          //diagnostique
         MOTOR_SetSpeed(0, moteur_g);
         MOTOR_SetSpeed(1, moteur_d);
@@ -146,13 +148,15 @@ void mouvement::m_mouvement(int bonneStation)
 
         if(capteurs == 2)
         {
+                Serial.print("\n\r");
+            Serial.print("2");
             flag = false;
             avance();
         }
         else if (capteurs == 4)
         {
             flag = false;
-            alignement_d();
+           alignement_d();
         }
         else if (capteurs == 1)
         {
@@ -161,6 +165,8 @@ void mouvement::m_mouvement(int bonneStation)
         }
         else if (capteurs == 7 && flag == false)
         {
+                Serial.print("\n\r");
+                Serial.print("7");
             flag = true;
             if(detect_station(bonneStation)==true)
             {
@@ -199,6 +205,11 @@ void mouvement::m_mouvement(int bonneStation)
                 }
             }
         }
+        else
+        {
+            Serial.print("\n\r");
+            Serial.print(capteurs);
+        }
     }   
 }
 /*
@@ -232,6 +243,8 @@ int mouvement::read()
 */
 void mouvement::avance()
 {
+    Serial.print("\n\r");
+    Serial.print("Avance");
     moteur_d = vitesseRapide;
     moteur_g = vitesseRapide;
 }
@@ -295,10 +308,12 @@ void mouvement::turn_station(bool direction)
     Serial.print("tourne");
     int moteurGauche;
     int moteurDroit;
-    if(direction)
+    if(direction==true)
     {
         moteurGauche=0;
         moteurDroit=vitesseLent;
+        Serial.print("\n\r");
+        Serial.print("Tourne Fini 1");
     }
     else
     {
@@ -308,8 +323,11 @@ void mouvement::turn_station(bool direction)
     MOTOR_SetSpeed(0, vitesseLent);
     MOTOR_SetSpeed(1, vitesseLent);
     delay(350);
+    
     MOTOR_SetSpeed(0, moteurGauche);
-    MOTOR_SetSpeed(1, moteurDroit);
+    MOTOR_SetSpeed(1, 0.1);
+    Serial.print("\n\r");
+    Serial.print("Tourne Fini");
     while(read() != 7){}
     Serial.print("\n\r");
     Serial.print("Tourne Fini");
@@ -322,6 +340,12 @@ void mouvement::turn_station(bool direction)
 */
 void mouvement::mouvement_Station()
 {
+    while(read()==7)
+    {
+        MOTOR_SetSpeed(0, moteur_g);
+        MOTOR_SetSpeed(1, moteur_d);
+    }
+    
     bool Arrive(true);
     while(Arrive==false)
     {
