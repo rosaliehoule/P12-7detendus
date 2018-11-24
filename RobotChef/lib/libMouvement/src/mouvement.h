@@ -43,7 +43,7 @@ class mouvement
         int station = -1;
 
         void calibration();
-        int read();
+        int Read();
 
         void burger_1();
         void burger_2();
@@ -135,7 +135,7 @@ void mouvement::m_mouvement(int bonneStation)
          //diagnostique
         MOTOR_SetSpeed(0, moteur_g);
         MOTOR_SetSpeed(1, moteur_d);
-        int capteurs = read();
+        int capteurs = Read();
 
         if(capteurs == 2)//Est centre
         {
@@ -198,7 +198,8 @@ void mouvement::m_mouvement(int bonneStation)
                 avance();
             }
         }
-    }   
+    } 
+    }  
 }
 /*
 * @Nom : read
@@ -209,7 +210,7 @@ void mouvement::m_mouvement(int bonneStation)
             +2 pour milieu
             +4 pour droit
 */
-int mouvement::read()
+int mouvement::Read()
 {
     int retourn = 0;
     
@@ -312,7 +313,7 @@ void mouvement::turn_Sort_station(bool direction)
     MOTOR_SetSpeed(1, moteurDroit);
     delay(350);
     //tourne jusqu'a la prochaine ligne
-    while(read() != 2){}
+    while(Read() != 2){}
 }
 /*
 * @Nom : turn_station
@@ -347,7 +348,7 @@ void mouvement::turn_station(bool direction)
     MOTOR_SetSpeed(1, moteurDroit);
     delay(350);
     //tourne jusqu'a la prochaine ligne
-    while(read() != 7){}
+    while(Read() != 7){}
 }
 /*
 * @Nom : mouvement_Station
@@ -358,7 +359,7 @@ void mouvement::turn_station(bool direction)
 void mouvement::mouvement_Station()
 {
     //Avance jusqu'a ne plus voir de ligne
-    while(read()==7)
+    while(Read()==7)
     {
         MOTOR_SetSpeed(0, vitesseLent);
         MOTOR_SetSpeed(1, vitesseLent);
@@ -369,7 +370,7 @@ void mouvement::mouvement_Station()
     {
         MOTOR_SetSpeed(0, moteur_g);
         MOTOR_SetSpeed(1, moteur_d);
-        int capteurs = read();
+        int capteurs = Read();
 
         if(capteurs == 2)//Est centre
         {
@@ -486,7 +487,7 @@ void mouvement::allerPorter(bool direction)
     demiTour();
     mouvement_Station();
     turn_Sort_station(direction);
-    m_mouvement(NBR_INGREDIENT+2)//Avance a la chute
+    m_mouvement(NBR_INGREDIENT+2);//Avance a la chute
 }
 
 /*
@@ -501,9 +502,9 @@ void mouvement::demiTour()
     MOTOR_SetSpeed(1,-vitesseLent);
     delay(500);
     MOTOR_SetSpeed(1,vitesseLent);
-    while(read()!=0)//Tourne jusqu'a ne plus voir de ligne
+    while(Read()!=0)//Tourne jusqu'a ne plus voir de ligne
     {}
-    while(read()!=2)//Tourne jusqu'a voir une ligne centre
+    while(Read()!=2)//Tourne jusqu'a voir une ligne centre
     {}
     MOTOR_SetSpeed(0,0);
     MOTOR_SetSpeed(1,0);
@@ -523,7 +524,7 @@ void mouvement::mouvement_Fin()
         MOTOR_SetSpeed(0, moteur_g);
         MOTOR_SetSpeed(1, moteur_d);
 
-        int capteurs = read();
+        int capteurs = Read();
 
         if(capteurs == 2)
         {
