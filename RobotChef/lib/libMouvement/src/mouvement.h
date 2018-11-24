@@ -138,8 +138,6 @@ void mouvement::m_mouvement(int bonneStation)
 {
     while(!fini)
     {
-            Serial.print("\n\r");
-    Serial.print("fini");
          //diagnostique
         MOTOR_SetSpeed(0, moteur_g);
         MOTOR_SetSpeed(1, moteur_d);
@@ -148,8 +146,6 @@ void mouvement::m_mouvement(int bonneStation)
 
         if(capteurs == 2)
         {
-                Serial.print("\n\r");
-            Serial.print("2");
             flag = false;
             avance();
         }
@@ -207,9 +203,7 @@ void mouvement::m_mouvement(int bonneStation)
         }
         else
         {
-            Serial.print("\n\r");
-            Serial.print(capteurs);
-        }
+                }
     }   
 }
 /*
@@ -328,9 +322,7 @@ void mouvement::turn_station(bool direction)
     MOTOR_SetSpeed(1, 0.1);
     Serial.print("\n\r");
     Serial.print("Tourne Fini");
-    while(read() != 7){}
-    Serial.print("\n\r");
-    Serial.print("Tourne Fini");
+    while(read() != 2){}
 }
 /*
 * @Nom : mouvement_Station
