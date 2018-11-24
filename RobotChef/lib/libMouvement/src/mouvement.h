@@ -7,20 +7,20 @@
 #define capt_2 A11
 #define capt_3 A12
 #define NBR_INGREDIENT 1
-#define Pain 1
-#define Boulette 2
-#define Fromage 3
-#define Salade 4
-#define Tomate 5
-#define Sauce 6
+#define Pain 0
+#define Boulette 1
+#define Fromage 2
+#define Salade 3
+#define Tomate 4
+#define Sauce 5
 
 /*  Stations:
-    1 Pain
-    2 Boulette
-    3 Fromage
-    4 Salade
-    5 Tomate
-    6 Sauce
+    0 Pain
+    1 Boulette
+    2 Fromage
+    3 Salade
+    4 Tomate
+    5 Sauce
 */
 
 class mouvement
