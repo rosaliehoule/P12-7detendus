@@ -14,20 +14,13 @@
 #define Tomate 5
 #define Sauce 6
 
-/*calibration des capteurs
- *	    blanc 	noir
- *   1	400     200
- *   2	360     200	
- *   3	170     100
- */
-/*
-    Stations:
+/*  Stations:
     1 Pain
-    2 Fromage
-    3 Salade
-    4 Sauce
+    2 Boulette
+    3 Fromage
+    4 Salade
     5 Tomate
-    6 Boulette
+    6 Sauce
 */
 
 class mouvement
@@ -43,8 +36,8 @@ class mouvement
         float moteur_g = vitesseLent;
         float moteur_d = vitesseLent;
 
-        float vitesseRapide = 0.13;
-        float vitesseLent = 0.1;
+        float vitesseRapide = 0.26;
+        float vitesseLent = 0.15;
 
         bool flag = false;
         int station = 0;
@@ -167,25 +160,25 @@ void mouvement::m_mouvement(int bonneStation)
             flag = true;
             if(detect_station(bonneStation)==true)
             {
-                turn_station(true);
+                turn_station();
                 mouvement_Station();
-                if(bonneStation<NBR_INGREDIENT)
+                if(bonneStation<=NBR_INGREDIENT)         //Ingredient
                 {
                     prendreIngredient();
                     allerPorter();
                 }
-                else if (bonneStation==NBR_INGREDIENT)
+                /*else if (bonneStation==NBR_INGREDIENT) //Boulette
                 {
                     prendreIngredient();
                     demiTour();
                     mouvement_Station();
-                    turn_station(true);
+                    turn_Sort_station(true);
                     MOTOR_SetSpeed(0,0.1);
                     MOTOR_SetSpeed(1,0.1);
                     delay(300);
                     m_mouvement(NBR_INGREDIENT+1);
                 }
-                else if (bonneStation==NBR_INGREDIENT+1)
+                else if (bonneStation==NBR_INGREDIENT+1) //Poele
                 {
                     lacherIngredient();
                     delay(5000);
@@ -194,16 +187,17 @@ void mouvement::m_mouvement(int bonneStation)
                     delay(5000);
                     prendreIngredient();
                     allerPorter();
-                }
-                else
+                }*/
+                else                                     //Drop
                 {
                     lacherIngredient();
                     retourner();
                 }
             }
-        }
-        else
-        {
+            else
+            {
+                avance();
+            }
         }
     }   
 }

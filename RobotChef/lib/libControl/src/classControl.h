@@ -92,7 +92,7 @@ int classControl::gestion_manette()
 
 /*
 * @Nom : get_ir
-* @Brief : trete les donnes recu par le capteur infrarouge et retourne la commande
+* @Brief : traite les donnees recu par le capteur infrarouge et retourne la commande
 * @Entré : void
 * @Sortie : un char qui décrie la commande recu
 */
