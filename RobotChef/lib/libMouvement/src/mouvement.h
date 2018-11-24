@@ -8,11 +8,11 @@
 #define capt_3 A12
 #define NBR_INGREDIENT 1
 #define Pain 1
-#define Fromage 2
-#define Salade 3
-#define Sauce 4
+#define Boulette 2
+#define Fromage 3
+#define Salade 4
 #define Tomate 5
-#define Boulette 6
+#define Sauce 6
 
 /*calibration des capteurs
  *	    blanc 	noir
@@ -64,7 +64,8 @@ class mouvement
         void mouvement_Fin();
         
         bool detect_station(int bonneStation);
-        void turn_station(bool direction);
+        void turn_Sort_station(bool direction);
+        void turn_station();
         void demiTour();
         
         void prendreIngredient();
@@ -203,7 +204,7 @@ void mouvement::m_mouvement(int bonneStation)
         }
         else
         {
-                }
+        }
     }   
 }
 /*
@@ -291,12 +292,12 @@ bool mouvement::detect_station(int bonneStation)
 }
 
 /*
-* @Nom : turn_station
+* @Nom : turn_Sort_station
 * @Brief : tourne jusqu'à tmeps de voir une autre ligne
 * @Entré : direction (1:gauche, 2:droite)
 * @Sortie : 
 */
-void mouvement::turn_station(bool direction)
+void mouvement::turn_Sort_station(bool direction)
 {
     Serial.print("\n\r");
     Serial.print("tourne");
@@ -323,6 +324,24 @@ void mouvement::turn_station(bool direction)
     Serial.print("\n\r");
     Serial.print("Tourne Fini");
     while(read() != 2){}
+}
+void mouvement::turn_station()
+{
+    Serial.print("\n\r");
+    Serial.print("tourne");
+    int moteurGauche;
+    int moteurDroit;
+    moteurGauche=0;
+    moteurDroit=vitesseLent;
+    MOTOR_SetSpeed(0, vitesseLent);
+    MOTOR_SetSpeed(1, vitesseLent);
+    delay(350);
+    
+    MOTOR_SetSpeed(0, moteurGauche);
+    MOTOR_SetSpeed(1, 0.1);
+    Serial.print("\n\r");
+    Serial.print("Tourne Fini");
+    while(read() != 7){}
 }
 /*
 * @Nom : mouvement_Station
@@ -443,7 +462,7 @@ void mouvement::retourner()
 {
     demiTour();
     mouvement_Station();
-    turn_station(false);
+    turn_Sort_station(false);
     fini =true;
     station = 0;
 }
@@ -458,7 +477,7 @@ void mouvement::allerPorter()
 {
     demiTour();
     mouvement_Station();
-    turn_station(true);
+    turn_Sort_station(true);
     m_mouvement(NBR_INGREDIENT+2);
 
 }
