@@ -40,7 +40,7 @@ class mouvement
         float vitesseLent = 0.15;
 
         bool flag = false;
-        int station = 0;
+        int station = -1;
 
         void calibration();
         int read();
@@ -56,15 +56,15 @@ class mouvement
         void mouvement_Station();
         void mouvement_Fin();
         
-        bool detect_station(int bonneStation);
+        bool detect_station(int bonneArret);
         void turn_Sort_station(bool direction);
-        void turn_station();
+        void turn_station(bool direction);
         void demiTour();
         
         void prendreIngredient();
         void lacherIngredient();
         void retourner();
-        void allerPorter();
+        void allerPorter(bool direction);
 };
 
 /*
@@ -135,37 +135,36 @@ void mouvement::m_mouvement(int bonneStation)
          //diagnostique
         MOTOR_SetSpeed(0, moteur_g);
         MOTOR_SetSpeed(1, moteur_d);
-
         int capteurs = read();
 
-        if(capteurs == 2)
+        if(capteurs == 2)//Est centre
         {
             flag = false;
             avance();
         }
-        else if (capteurs == 4)
+        else if (capteurs == 4)//Est décalé vers la gauche
         {
             flag = false;
-           alignement_d();
+            alignement_d();
         }
-        else if (capteurs == 1)
+        else if (capteurs == 1)//Est décalé vers la droite
         {
             flag = false;
             alignement_g();
         }
-        else if (capteurs == 7 && flag == false)
+        else if (capteurs == 7 && flag == false)//Est à la ligne
         {
-                Serial.print("\n\r");
-                Serial.print("7");
+        {
+            bool direction= bonneStation%2==0;
             flag = true;
-            if(detect_station(bonneStation)==true)
+            if(detect_station(floor((bonneStation)/2))==true)// le calcul traduit la station en nombre de ligne perpendiculaire
             {
-                turn_station();
+                turn_station(direction);
                 mouvement_Station();
                 if(bonneStation<=NBR_INGREDIENT)         //Ingredient
                 {
                     prendreIngredient();
-                    allerPorter();
+                    allerPorter(direction);
                 }
                 /*else if (bonneStation==NBR_INGREDIENT) //Boulette
                 {
@@ -186,7 +185,7 @@ void mouvement::m_mouvement(int bonneStation)
                     lacherIngredient();
                     delay(5000);
                     prendreIngredient();
-                    allerPorter();
+                    allerPorter(direction);
                 }*/
                 else                                     //Drop
                 {
@@ -268,14 +267,12 @@ void mouvement::alignement_g()
 * @Entré : station désiré
 * @Sortie : à atteint la station désiré
 */
-bool mouvement::detect_station(int bonneStation)
+bool mouvement::detect_station(int bonneArret)
 {
+    //Augmente la station presente
     station++;
-    
-    //Serial.print("\n\r");
-    //Serial.print(station);
-
-    if (station == bonneStation)
+    if (station == bonneArret)
+    //regarde s'il est a la station voulu
     {
         return true;
     }
@@ -287,17 +284,48 @@ bool mouvement::detect_station(int bonneStation)
 
 /*
 * @Nom : turn_Sort_station
-* @Brief : tourne jusqu'à tmeps de voir une autre ligne
+* @Brief : tourne jusqu'à temps de voir une autre ligne
 * @Entré : direction (1:gauche, 2:droite)
 * @Sortie : 
 */
 void mouvement::turn_Sort_station(bool direction)
 {
-    Serial.print("\n\r");
-    Serial.print("tourne");
     int moteurGauche;
     int moteurDroit;
-    if(direction==true)
+    if(direction)
+    {
+        moteurGauche=0;
+        moteurDroit=vitesseLent;
+    }
+    else
+    {
+        moteurGauche=vitesseLent;
+        moteurDroit=0;
+    }
+
+    //avance un peu
+    MOTOR_SetSpeed(0, vitesseLent);
+    MOTOR_SetSpeed(1, vitesseLent);
+    delay(350);
+    //tourne pour ne plus voir la ligne
+    MOTOR_SetSpeed(0, moteurGauche);
+    MOTOR_SetSpeed(1, moteurDroit);
+    delay(350);
+    //tourne jusqu'a la prochaine ligne
+    while(read() != 2){}
+}
+/*
+* @Nom : turn_station
+* @Brief : tourne jusqu'à temps de voir une autre ligne
+* @Entré : direction (1:gauche, 2:droite)
+* @Sortie : 
+*/
+void mouvement::turn_station(bool direction)
+{
+    int moteurGauche;
+    int moteurDroit;
+    //regarde la direction a tourner
+    if(direction)
     {
         moteurGauche=0;
         moteurDroit=vitesseLent;
@@ -309,32 +337,16 @@ void mouvement::turn_Sort_station(bool direction)
         moteurGauche=vitesseLent;
         moteurDroit=0;
     }
+
+    //avance un peu
     MOTOR_SetSpeed(0, vitesseLent);
     MOTOR_SetSpeed(1, vitesseLent);
     delay(350);
-    
+    //tourne pour ne plus voir la ligne
     MOTOR_SetSpeed(0, moteurGauche);
-    MOTOR_SetSpeed(1, 0.1);
-    Serial.print("\n\r");
-    Serial.print("Tourne Fini");
-    while(read() != 2){}
-}
-void mouvement::turn_station()
-{
-    Serial.print("\n\r");
-    Serial.print("tourne");
-    int moteurGauche;
-    int moteurDroit;
-    moteurGauche=0;
-    moteurDroit=vitesseLent;
-    MOTOR_SetSpeed(0, vitesseLent);
-    MOTOR_SetSpeed(1, vitesseLent);
+    MOTOR_SetSpeed(1, moteurDroit);
     delay(350);
-    
-    MOTOR_SetSpeed(0, moteurGauche);
-    MOTOR_SetSpeed(1, 0.1);
-    Serial.print("\n\r");
-    Serial.print("Tourne Fini");
+    //tourne jusqu'a la prochaine ligne
     while(read() != 7){}
 }
 /*
@@ -345,37 +357,38 @@ void mouvement::turn_station()
 */
 void mouvement::mouvement_Station()
 {
+    //Avance jusqu'a ne plus voir de ligne
     while(read()==7)
     {
-        MOTOR_SetSpeed(0, moteur_g);
-        MOTOR_SetSpeed(1, moteur_d);
+        MOTOR_SetSpeed(0, vitesseLent);
+        MOTOR_SetSpeed(1, vitesseLent);
     }
-    
+    //Avance à la prochaine ligne
     bool Arrive(true);
     while(Arrive==false)
     {
         MOTOR_SetSpeed(0, moteur_g);
         MOTOR_SetSpeed(1, moteur_d);
-
         int capteurs = read();
 
-        if(capteurs == 2)
+        if(capteurs == 2)//Est centre
         {
             flag = false;
             avance();
         }
-        else if (capteurs == 4)
+        else if (capteurs == 4)//Est décalé vers la gauche
         {
             flag = false;
             alignement_d();
         }
-        else if (capteurs == 1)
+        else if (capteurs == 1)//Est décalé vers la droite
         {
             flag = false;
             alignement_g();
         }
-        else if (capteurs == 7 && flag == false)
+        else if (capteurs == 7 && flag == false)//Est à la ligne
         {
+            //Arrete
             MOTOR_SetSpeed(0,0);
             MOTOR_SetSpeed(1,0);
             Arrive=true;
@@ -438,11 +451,11 @@ void mouvement::prendreIngredient()
 */
 void mouvement::lacherIngredient()
 {
-    pince(true);
+    pince(true);//ouvre
     delay(500);
-    flip_bras(false);
+    flip_bras(false);//vire le bras
     delay(500);
-    flip_bras(true);
+    flip_bras(true);//retourne le bras a sa position normal
     delay(500);
 }
 
@@ -456,9 +469,10 @@ void mouvement::retourner()
 {
     demiTour();
     mouvement_Station();
-    turn_Sort_station(false);
-    fini =true;
-    station = 0;
+    turn_Sort_station(false);//Retourne sur la ligne principal
+    //réinitialise les variables pour la prochaine commande
+    fini =true; 
+    station = -1;
 }
 
 /*
@@ -467,13 +481,12 @@ void mouvement::retourner()
 * @Entré : 
 * @Sortie : 
 */
-void mouvement::allerPorter()
+void mouvement::allerPorter(bool direction)
 {
     demiTour();
     mouvement_Station();
-    turn_Sort_station(true);
-    m_mouvement(NBR_INGREDIENT+2);
-
+    turn_Sort_station(direction);
+    m_mouvement(NBR_INGREDIENT+2)//Avance a la chute
 }
 
 /*
@@ -488,9 +501,9 @@ void mouvement::demiTour()
     MOTOR_SetSpeed(1,-vitesseLent);
     delay(500);
     MOTOR_SetSpeed(1,vitesseLent);
-    while(read()!=0)
+    while(read()!=0)//Tourne jusqu'a ne plus voir de ligne
     {}
-    while(read()!=2)
+    while(read()!=2)//Tourne jusqu'a voir une ligne centre
     {}
     MOTOR_SetSpeed(0,0);
     MOTOR_SetSpeed(1,0);

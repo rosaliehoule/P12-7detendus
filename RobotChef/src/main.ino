@@ -28,7 +28,7 @@ void setup()
 {
   Serial.begin(9600);
   BoardInit();
-  //DisplayInit();
+  DisplayInit();
 
   pince(true);
   flip_bras(true);
@@ -38,7 +38,7 @@ void setup()
 
 /*
  * @Nom : loop()
- * @Brief : Boucle principal, le Main de l'Arduino
+ * @Brief : Boucle principal, le Main du Arduino
  * @Entré : void
  * @Sortie : void
  */
