@@ -31,7 +31,7 @@ class classControl
 
         //index et structure du menu principal
         int index_setup = 1;
-        char menu_setup[6][20] = {"", "Calibration", "Afficher valeur M.", "Credit", "Quiter", ""};
+        char menu_setup[6][20] = {"", "Calibration", "Afficher valeur M.", "Debuging", "Quiter", ""};
 
         //valeur de threshold de pour les detecteurs de ligne
         int threshold_1 = eeprom_read_byte((uint8_t *)1);
@@ -346,6 +346,16 @@ void classControl::menu_enter()
     {
         print_values();
     }
+    else if(index_setup == 3 && is_menu_setup)
+    {
+        while(true)
+        {
+            DISPLAY_Clear();
+            DISPLAY_SetCursor(0,0);
+            DISPLAY_Printf((String) read());
+            delay(500);
+        }
+    }
     else if(index_setup == 4 && is_menu_setup)
     {
         index_setup = 1;
@@ -463,31 +473,60 @@ void classControl::calibration()
     DISPLAY_Clear();
     DISPLAY_SetCursor(0,0);
     DISPLAY_Printf("Calib. du noir");
+
     while(get_ir() != 0){}
+    DISPLAY_Clear();
+    DISPLAY_SetCursor(0,0);
 
     int a1 = analogRead(capt_1);
     int b1 = analogRead(capt_2);
     int c1 = analogRead(capt_3);
 
+    DISPLAY_Printf("Cap1:");
+    DISPLAY_Printf((String) a1);
+    DISPLAY_SetCursor(1,0);
+    DISPLAY_Printf("Cap2:");
+    DISPLAY_Printf((String) b1);
+    DISPLAY_SetCursor(2,0);
+    DISPLAY_Printf("Cap3:");
+    DISPLAY_Printf((String) c1);
+
+    while(get_ir() != 0){}
     DISPLAY_Clear();
     DISPLAY_SetCursor(0,0);
+
     DISPLAY_Printf("Calib. du blanc");
+
     while(get_ir() != 0){}
+    DISPLAY_Clear();
+    DISPLAY_SetCursor(0,0);
 
     int a2 = analogRead(capt_1);
     int b2 = analogRead(capt_2);
     int c2 = analogRead(capt_3);
 
-    eeprom_write_byte((uint8_t *)1,(a1 + a2)/2);
-    eeprom_write_byte((uint8_t *)2,(b1 + b2)/2);
-    eeprom_write_byte((uint8_t *)3,(c1 + c2)/2);
+    DISPLAY_Printf("Cap1:");
+    DISPLAY_Printf((String) a2);
+    DISPLAY_SetCursor(1,0);
+    DISPLAY_Printf("Cap2:");
+    DISPLAY_Printf((String) b2);
+    DISPLAY_SetCursor(2,0);
+    DISPLAY_Printf("Cap3:");
+    DISPLAY_Printf((String) c2);
+
+    while(get_ir() != 0){}
+    DISPLAY_Clear();
+    DISPLAY_SetCursor(0,0);
+
+    delay(1000);
+    eeprom_write_byte((uint8_t *)1, (a1 + a2) /2);
+    eeprom_write_byte((uint8_t *)2, (b1 + b2) /2);
+    eeprom_write_byte((uint8_t *)3, (c1 + c2) /2);
 
     threshold_1 = eeprom_read_byte((uint8_t *)1);
     threshold_2 = eeprom_read_byte((uint8_t *)2);
     threshold_3 = eeprom_read_byte((uint8_t *)3);
 
-    DISPLAY_Clear();
-    DISPLAY_SetCursor(0,0);
     DISPLAY_Printf("Calib. effectue");
 
     delay(1500);
@@ -498,10 +537,13 @@ void classControl::print_values()
 {
     DISPLAY_Clear();
     DISPLAY_SetCursor(0,0);
+    DISPLAY_Printf("Cap1:");
     DISPLAY_Printf((String) eeprom_read_byte((uint8_t *)1));
     DISPLAY_SetCursor(1,0);
+    DISPLAY_Printf("Cap2:");
     DISPLAY_Printf((String) eeprom_read_byte((uint8_t *)2));
     DISPLAY_SetCursor(2,0);
+    DISPLAY_Printf("Cap3:");
     DISPLAY_Printf((String) eeprom_read_byte((uint8_t *)3));
     while(get_ir() != 0){}
     refresh_LCD();

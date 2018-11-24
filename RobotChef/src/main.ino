@@ -30,6 +30,12 @@ void setup()
   pince(true);
   flip_bras(true);
   Robot.refresh_LCD();
+
+  if(ROBUS_IsBumper(0))
+  {
+    Robot.moteur_d = 0;
+    Robot.moteur_g = 0;
+  }
 }
 
 /*
