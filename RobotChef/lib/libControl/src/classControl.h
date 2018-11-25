@@ -34,9 +34,9 @@ class classControl
         char menu_setup[6][20] = {"", "Calibration", "Afficher valeur M.", "Debuging", "Quiter", ""};
 
         //valeur de threshold de pour les detecteurs de ligne
-        int threshold_1 = eeprom_read_byte((uint8_t *)1);
-        int threshold_2 = eeprom_read_byte((uint8_t *)2);
-        int threshold_3 = eeprom_read_byte((uint8_t *)3);
+        int threshold_1 = eeprom_read_byte((uint8_t *)1) * 5;
+        int threshold_2 = eeprom_read_byte((uint8_t *)2) * 5;
+        int threshold_3 = eeprom_read_byte((uint8_t *)3) * 5;
 
         //valeur pour les vitesses de moteurs
         //la vitesse des moteurs est modifier en 
@@ -57,6 +57,14 @@ class classControl
         * @Sortie : void
         */
         void mouvement();
+
+        /*
+        * @Nom : gotoStation()
+        * @Brief : 
+        * @Entré : void
+        * @Sortie : void
+        */
+        void gotoLevel(int level);
 
         /*
         * @Nom : read()
@@ -110,7 +118,16 @@ class classControl
         * @Entré : void
         * @Sortie : void
         */
-        void turn_station();
+        void turn_station_d();
+
+        /*
+        * @Nom : turn_station()
+        * @Brief : appele quand on detecte un station et qu'on veux tourne
+        * a 90 degre pour aller rejoindre la station
+        * @Entré : void
+        * @Sortie : void
+        */
+        void turn_station_g();
 
         /// --- GESTION DE LA MANETTE ---///
 
@@ -218,7 +235,7 @@ class classControl
 //FONCTIONS DEFINITION
 void classControl::gestion_manette()
 {
-    int remote = get_ir();
+  int remote = get_ir();
 
   //gestion de déplacement dans le menu
   if(remote == 2)
@@ -366,17 +383,17 @@ void classControl::menu_enter()
 
 void classControl::burger1()
 {
-
+    mouvement();
 }
 
 void classControl::burger2()
 {
-
+    mouvement();
 }
 
 void classControl::burger3()
 {
-
+    mouvement();
 }
 
 void classControl::mouvement()
@@ -444,25 +461,23 @@ void classControl::alignement_g()
 void classControl::detect_station()
 {
     station++;
-
-    if (station == 1)
-    {
-        turn_station();
-        avance();
-    }
-    else if (station == 2)
-    {
-        MOTOR_SetSpeed(0, 0);
-        MOTOR_SetSpeed(1, 0);
-        while(true){}
-    }
 }
 
-void classControl::turn_station()
+void classControl::turn_station_d()
 {
     MOTOR_SetSpeed(0, 0.1);
     MOTOR_SetSpeed(1, 0.1);
-    delay(350);
+    delay(500);
+    MOTOR_SetSpeed(0, 0.1);
+    MOTOR_SetSpeed(1, 0);
+    while(read() != 7){}
+}
+
+void classControl::turn_station_g()
+{
+    MOTOR_SetSpeed(0, 0.1);
+    MOTOR_SetSpeed(1, 0.1);
+    delay(500);
     MOTOR_SetSpeed(0, 0);
     MOTOR_SetSpeed(1, 0.1);
     while(read() != 7){}
@@ -518,14 +533,33 @@ void classControl::calibration()
     DISPLAY_Clear();
     DISPLAY_SetCursor(0,0);
 
-    delay(1000);
-    eeprom_write_byte((uint8_t *)1, (a1 + a2) /2);
-    eeprom_write_byte((uint8_t *)2, (b1 + b2) /2);
-    eeprom_write_byte((uint8_t *)3, (c1 + c2) /2);
+    int a = a1 + a2;
+    a = a / 2;
+    int b = b1 + b2;
+    b = b / 2;
+    int c = c1 + c2;
+    c = c / 2;
 
-    threshold_1 = eeprom_read_byte((uint8_t *)1);
-    threshold_2 = eeprom_read_byte((uint8_t *)2);
-    threshold_3 = eeprom_read_byte((uint8_t *)3);
+    DISPLAY_Printf("Thr1:");
+    DISPLAY_Printf((String) a);
+    DISPLAY_SetCursor(1,0);
+    DISPLAY_Printf("Thr2:");
+    DISPLAY_Printf((String) b);
+    DISPLAY_SetCursor(2,0);
+    DISPLAY_Printf("Thr3:");
+    DISPLAY_Printf((String) c);
+
+    while(get_ir() != 0){}
+    DISPLAY_Clear();
+    DISPLAY_SetCursor(0,0);
+
+    eeprom_write_byte((uint8_t *)1, a / 5);
+    eeprom_write_byte((uint8_t *)2, b / 5);
+    eeprom_write_byte((uint8_t *)3, c / 5);
+
+    threshold_1 = eeprom_read_byte((uint8_t *)1) * 5;
+    threshold_2 = eeprom_read_byte((uint8_t *)2) * 5;
+    threshold_3 = eeprom_read_byte((uint8_t *)3) * 5;
 
     DISPLAY_Printf("Calib. effectue");
 
@@ -538,13 +572,13 @@ void classControl::print_values()
     DISPLAY_Clear();
     DISPLAY_SetCursor(0,0);
     DISPLAY_Printf("Cap1:");
-    DISPLAY_Printf((String) eeprom_read_byte((uint8_t *)1));
+    DISPLAY_Printf((String) (eeprom_read_byte((uint8_t *)1) * 5));
     DISPLAY_SetCursor(1,0);
     DISPLAY_Printf("Cap2:");
-    DISPLAY_Printf((String) eeprom_read_byte((uint8_t *)2));
+    DISPLAY_Printf((String) (eeprom_read_byte((uint8_t *)2) * 5));
     DISPLAY_SetCursor(2,0);
     DISPLAY_Printf("Cap3:");
-    DISPLAY_Printf((String) eeprom_read_byte((uint8_t *)3));
+    DISPLAY_Printf((String) (eeprom_read_byte((uint8_t *)3) * 5));
     while(get_ir() != 0){}
     refresh_LCD();
 }

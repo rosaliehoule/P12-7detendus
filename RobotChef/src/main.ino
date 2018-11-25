@@ -14,6 +14,7 @@
 #include <classControl.h>
 
 classControl Robot;
+bool debuging = false;
 
 /*
  * @Nom : setup()
@@ -30,12 +31,6 @@ void setup()
   pince(true);
   flip_bras(true);
   Robot.refresh_LCD();
-
-  if(ROBUS_IsBumper(0))
-  {
-    Robot.moteur_d = 0;
-    Robot.moteur_g = 0;
-  }
 }
 
 /*
@@ -46,7 +41,7 @@ void setup()
  */
 void loop() 
 {
-  Robot.mouvement();
+  
   Robot.gestion_manette();
-  delay(25);// Delais pour décharger le CPU
+  delay(100);// Delais pour décharger le CPU
 }
