@@ -399,13 +399,14 @@ void classControl::menu_enter()
 
 void classControl::burger1()
 {
-    mouvement(Pain);
+    mouvement(3);
     fini=false;
 }
 
 void classControl::burger2()
 {
-    //mouvement();
+    mouvement(2);
+    fini=false;
 }
 
 void classControl::burger3()
@@ -447,6 +448,11 @@ void classControl::mouvement(int bonneStation)
                 turn_station(direction);
                 mouvement_Station();
                 if(bonneStation==2)         //Ingredient
+                {
+                    prendreIngredient();
+                    allerPorter(direction);
+                }
+                else if(bonneStation==3)         //Ingredient
                 {
                     prendreIngredient();
                     allerPorter(direction);
@@ -503,20 +509,20 @@ int classControl::read()
 
 void classControl::avance()
 {
-    moteur_d = 0.1;
-    moteur_g = 0.1;
+    moteur_d = 0.16;
+    moteur_g = 0.16;
 }
 
 void classControl::alignement_d()
 {
-    moteur_d = 0.08;
-    moteur_g = 0.13;
+    moteur_d = 0.11;
+    moteur_g = 0.16;
 }
 
 void classControl::alignement_g()
 {
-    moteur_d = 0.13;
-    moteur_g = 0.08;
+    moteur_d = 0.16;
+    moteur_g = 0.11;
 }
 
 bool classControl::detect_station(int bonneStation)
@@ -551,7 +557,7 @@ void classControl::turn_station(bool direction)
     //avance un peu
     MOTOR_SetSpeed(0, 0.1);
     MOTOR_SetSpeed(1, 0.1);
-    delay(300);
+    delay(500);
     //tourne pour ne plus voir la ligne
     MOTOR_SetSpeed(0, moteur_g);
     MOTOR_SetSpeed(1, moteur_d);
@@ -576,8 +582,8 @@ void classControl::turn_Sort_station(bool direction)
     }
 
     //avance un peu
-    MOTOR_SetSpeed(0, 0.1);
-    MOTOR_SetSpeed(1, 0.1);
+    MOTOR_SetSpeed(0, 0.16);
+    MOTOR_SetSpeed(1, 0.16);
     while(read()!=0){}
     
     while(read()!=7){}
@@ -772,15 +778,15 @@ void classControl::quartTour(bool direction)
 {
     ENCODER_Reset(direction);
     ENCODER_Reset(!direction);
-  while(40>ENCODER_Read(direction)*0.023038563||-40<ENCODER_Read(!direction)*0.023038563)
+  while(42>ENCODER_Read(direction)*0.023038563||-42<ENCODER_Read(!direction)*0.023038563)
   {
-    if(40>ENCODER_Read(direction)*0.023038563)
+    if(42>ENCODER_Read(direction)*0.023038563)
     {
       MOTOR_SetSpeed(direction,0.1);
     }
     else
       MOTOR_SetSpeed(direction,0);
-    if(-40<ENCODER_Read(!direction)*0.023038563)
+    if(-42<ENCODER_Read(!direction)*0.023038563)
     {
       MOTOR_SetSpeed(!direction,-0.095);
     }
@@ -854,12 +860,14 @@ void classControl::mouvement_Fin()
             delay(200);
             if(read()==0)
             {
-                MOTOR_SetSpeed(0,0);
-                MOTOR_SetSpeed(1,0);
-                Arrive=true;
-            }
-            //Arrete
-          
+                delay(100);
+                if(read()==0)
+                {
+                    MOTOR_SetSpeed(0,0);
+                    MOTOR_SetSpeed(1,0);
+                    Arrive=true;
+                }
+            }//Arrete
         }
     }
 }
