@@ -57,7 +57,7 @@ void pince(bool p)
     }
     else
     {
-        SERVO_SetAngle(1,170);
+        SERVO_SetAngle(1,165);
     }
     
 }
