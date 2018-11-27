@@ -19,11 +19,11 @@
 #define capt_3 A12
 #define NBR_INGREDIENT 1
 #define Pain 2
-#define Boulette 3
-#define Fromage 4
-#define Salade 5
-#define Tomate 6
-#define Sauce 7
+#define Fromage 3
+#define Salade 4
+#define Boulette 5
+#define Poele 6
+#define Drop 7
 
 //CLASS DEFINITION
 class classControl
@@ -64,7 +64,7 @@ class classControl
         * @Entré : void
         * @Sortie : void
         */
-        void mouvement(int bonnaStation);
+        void mouvement(int bonneStation);
 
         /*
         * @Nom : gotoStation()
@@ -246,6 +246,7 @@ class classControl
         void retourner();
         void quartTour(bool direction);
         void allerPorter(bool direction);
+        void bouletteStation();
 };
 
 //FONCTIONS DEFINITION
@@ -399,7 +400,11 @@ void classControl::menu_enter()
 
 void classControl::burger1()
 {
-    mouvement(3);
+    mouvement(Pain);
+    fini=false;
+    mouvement(Boulette);
+    fini=false;
+    mouvement(Pain);
     fini=false;
 }
 
@@ -411,7 +416,14 @@ void classControl::burger2()
 
 void classControl::burger3()
 {
-    //mouvement();
+   mouvement(Pain);
+    fini=false;
+    mouvement(Boulette);
+    fini=false;
+    mouvement(Fromage);
+    fini=false;
+    mouvement(Pain);
+    fini=false;
 }
 
 void classControl::mouvement(int bonneStation)
@@ -447,38 +459,24 @@ void classControl::mouvement(int bonneStation)
             {
                 turn_station(direction);
                 mouvement_Station();
-                if(bonneStation==2)         //Ingredient
+                if(bonneStation<5)         //Ingredients
                 {
                     prendreIngredient();
                     allerPorter(direction);
                 }
-                else if(bonneStation==3)         //Ingredient
-                {
-                    prendreIngredient();
-                    allerPorter(direction);
-                }
-                /*else if (bonneStation==NBR_INGREDIENT) //Boulette
+                else if(bonneStation==5)         //Boulette
                 {
                     prendreIngredient();
                     demiTour();
                     mouvement_Station();
-                    turn_Sort_station(true);
-                    MOTOR_SetSpeed(0,0.1);
-                    MOTOR_SetSpeed(1,0.1);
-                    delay(300);
-                    mouvement(NBR_INGREDIENT+1);
+                    turn_Sort_station(direction);
+                    mouvement(Poele);
                 }
-                else if (bonneStation==3) //Poele
+                else if (bonneStation==6) //Poele
                 {
-                    lacherIngredient();
-                    delay(5000);
-                    prendreIngredient();
-                    lacherIngredient();
-                    delay(5000);
-                    prendreIngredient();
-                    allerPorter(direction);
-                }*/
-                else if(bonneStation==5)                                   //Drop
+                    bouletteStation();
+                }
+                else if(bonneStation==7)                                   //Drop
                 {
                     lacherIngredient();
                     retourner();
@@ -509,20 +507,20 @@ int classControl::read()
 
 void classControl::avance()
 {
-    moteur_d = 0.16;
-    moteur_g = 0.16;
+    moteur_d = 0.2;
+    moteur_g = 0.2;
 }
 
 void classControl::alignement_d()
 {
-    moteur_d = 0.11;
-    moteur_g = 0.16;
+    moteur_d = 0.13;
+    moteur_g = 0.2;
 }
 
 void classControl::alignement_g()
 {
-    moteur_d = 0.16;
-    moteur_g = 0.11;
+    moteur_d = 0.2;
+    moteur_g = 0.13;
 }
 
 bool classControl::detect_station(int bonneStation)
@@ -544,20 +542,20 @@ void classControl::turn_station(bool direction)
     if(direction)
     {
         moteur_g=0;
-        moteur_d=0.1;
+        moteur_d=0.2;
         Serial.print("\n\r");
         Serial.print("Tourne Fini 1");
     }
     else
     {
-        moteur_g=0.1;
+        moteur_g=0.2;
         moteur_d=0;
     }
 
     //avance un peu
-    MOTOR_SetSpeed(0, 0.1);
-    MOTOR_SetSpeed(1, 0.1);
-    delay(500);
+    MOTOR_SetSpeed(0, 0.2);
+    MOTOR_SetSpeed(1, 0.2);
+    delay(250);
     //tourne pour ne plus voir la ligne
     MOTOR_SetSpeed(0, moteur_g);
     MOTOR_SetSpeed(1, moteur_d);
@@ -568,26 +566,13 @@ void classControl::turn_station(bool direction)
 
 void classControl::turn_Sort_station(bool direction)
 {
-   if(direction)
-    {
-        moteur_g=-0.095;
-        moteur_d=0.1;
-        Serial.print("\n\r");
-        Serial.print("Tourne Fini 1");
-    }
-    else
-    {
-        moteur_g=0.1;
-        moteur_d=-0.095;
-    }
-
     //avance un peu
-    MOTOR_SetSpeed(0, 0.16);
-    MOTOR_SetSpeed(1, 0.16);
+    MOTOR_SetSpeed(0, 0.2);
+    MOTOR_SetSpeed(1, 0.2);
     while(read()!=0){}
     
     while(read()!=7){}
-    delay(200);
+    delay(150);
 
     quartTour(direction);
 }
@@ -708,7 +693,7 @@ void classControl::lacherIngredient()
     pince(true);//ouvre
     delay(500);
     flip_bras(false);//vire le bras
-    delay(500);
+    delay(800);
     flip_bras(true);//retourne le bras a sa position normal
     delay(500);
 }
@@ -725,6 +710,7 @@ void classControl::retourner()
     mouvement_Station();
     turn_Sort_station(true);
     mouvement_Fin();//Retourne sur la ligne principal
+    demiTour();
     //réinitialise les variables pour la prochaine commande
     fini =true; 
     station = -1;
@@ -741,7 +727,7 @@ void classControl::allerPorter(bool direction)
     demiTour();
     mouvement_Station();
     turn_Sort_station(direction);
-    mouvement(5);//Avance a la chute
+    mouvement(Drop);//Avance a la chute
 }
 
 /*
@@ -752,26 +738,28 @@ void classControl::allerPorter(bool direction)
 */
 void classControl::demiTour()
 {
-    MOTOR_SetSpeed(0,-0.1);
-    MOTOR_SetSpeed(1,-0.1);
-    delay(1000);
+    MOTOR_SetSpeed(0,-0.15);
+    MOTOR_SetSpeed(1,-0.15);
+    delay(750);
     ENCODER_Reset(1);
     ENCODER_Reset(0);
-  while(85>ENCODER_Read(1)*0.023038563||-85<ENCODER_Read(0)*0.023038563)
+  while(87>ENCODER_Read(1)*0.023038563||-87<ENCODER_Read(0)*0.023038563)
   {
-    if(85>ENCODER_Read(1)*0.023038563)
+    if(87>ENCODER_Read(1)*0.023038563)
     {
-      MOTOR_SetSpeed(1,0.1);
+      MOTOR_SetSpeed(1,0.15);
     }
     else
       MOTOR_SetSpeed(1,0);
-    if(-85<ENCODER_Read(0)*0.023038563)
+    if(-87<ENCODER_Read(0)*0.023038563)
     {
-      MOTOR_SetSpeed(0,-0.095);
+      MOTOR_SetSpeed(0,-0.1495);
     }
     else
       MOTOR_SetSpeed(0,0);
   }
+  MOTOR_SetSpeed(0,0);
+  MOTOR_SetSpeed(1,0);
 }
 
 void classControl::quartTour(bool direction)
@@ -782,13 +770,13 @@ void classControl::quartTour(bool direction)
   {
     if(42>ENCODER_Read(direction)*0.023038563)
     {
-      MOTOR_SetSpeed(direction,0.1);
+      MOTOR_SetSpeed(direction,0.15);
     }
     else
       MOTOR_SetSpeed(direction,0);
     if(-42<ENCODER_Read(!direction)*0.023038563)
     {
-      MOTOR_SetSpeed(!direction,-0.095);
+      MOTOR_SetSpeed(!direction,-0.1495);
     }
     else
       MOTOR_SetSpeed(!direction,0);
@@ -803,37 +791,8 @@ void classControl::quartTour(bool direction)
 */
 void classControl::mouvement_Fin()
 {
-    MOTOR_SetSpeed(0,0.1);
-    MOTOR_SetSpeed(1,0.1);
-    bool Arrive(false);
-    while(Arrive==false)
-    {
-        MOTOR_SetSpeed(0, moteur_g);
-        MOTOR_SetSpeed(1, moteur_d);
-        int capteurs = read();
-
-        if(capteurs == 2)//Est centre
-        {
-            flag = false;
-            avance();
-        }
-        else if (capteurs == 6||capteurs==4)//Est décalé vers la gauche
-        {
-            flag = false;
-            alignement_d();
-        }
-        else if (capteurs == 3||capteurs==1)//Est décalé vers la droite
-        {
-            flag = false;
-            alignement_g();
-        }
-        else if (capteurs == 7 && flag == false)//Est à la ligne
-        {
-            //Arrete
-            Arrive=true;
-        }
-    }
-     Arrive=false;
+    mouvement_Station();
+     bool Arrive=false;
     while(Arrive==false)
     {
         MOTOR_SetSpeed(0, moteur_g);
@@ -857,15 +816,19 @@ void classControl::mouvement_Fin()
         }
         else if (capteurs == 0 && flag == false)//Est à la ligne
         {
-            delay(200);
+            delay(100);
             if(read()==0)
             {
                 delay(100);
                 if(read()==0)
                 {
-                    MOTOR_SetSpeed(0,0);
-                    MOTOR_SetSpeed(1,0);
-                    Arrive=true;
+                    delay(100);
+                    if(read()==0)
+                    {
+                        MOTOR_SetSpeed(0,0);
+                        MOTOR_SetSpeed(1,0);
+                        Arrive=true;
+                    }
                 }
             }//Arrete
         }
@@ -912,4 +875,37 @@ void classControl::mouvement_Station()
             Arrive=true;
         }
     }
+}
+void classControl::bouletteStation()
+{
+    pince(true);//ouvre
+    delay(500);
+    flip_bras(false);
+    MOTOR_SetSpeed(1,-0.15);
+    MOTOR_SetSpeed(0,-0.15);
+    delay(1500);
+    MOTOR_SetSpeed(1,0);
+    MOTOR_SetSpeed(0,0);
+    flip_bras(true);
+    delay(5000);
+    mouvement_Station();
+    delay(500);
+    flip_bras(false);
+    delay(500);
+    MOTOR_SetSpeed(1,-0.15);
+    MOTOR_SetSpeed(0,-0.15);
+    delay(1500);
+    MOTOR_SetSpeed(1,0);
+    MOTOR_SetSpeed(0,0);
+    flip_bras(true);
+    delay(5000);
+    mouvement_Station();
+    prendreIngredient();
+    demiTour();
+    mouvement_Station();
+    mouvement_Station();
+    mouvement_Station();
+    mouvement_Station();
+    lacherIngredient();
+    retourner();
 }
