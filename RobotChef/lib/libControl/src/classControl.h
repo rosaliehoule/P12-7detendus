@@ -21,7 +21,7 @@
 #define Pain 2
 #define Fromage 3
 #define Salade 4
-#define Boulette 5
+#define Boulette 3
 #define Poele 6
 #define Drop 7
 
@@ -34,11 +34,11 @@ class classControl
 
         //index et structure du menu principal
         int index_menu = 1;
-        char menu_main[6][20] = {"", "Burger", "Bacon Burger", "Cheese Burger", "Setup", ""};
+        char menu_main[6][20] = {"", "PATE DE CRABE", "COMBO CROUSTILLANT", "CRABE DELUXE", "Setup", ""};
 
         //index et structure du menu principal
         int index_setup = 1;
-        char menu_setup[6][20] = {"", "Calibration", "Afficher valeur M.", "Debuging", "Quiter", ""};
+        char menu_setup[6][20] = {"", "Calibration", "Afficher valeur M.", "Debuging", "Quitter", ""};
 
         //valeur de threshold de pour les detecteurs de ligne
         int threshold_1 = eeprom_read_byte((uint8_t *)1) * 5;
@@ -65,14 +65,6 @@ class classControl
         * @Sortie : void
         */
         void mouvement(int bonneStation);
-
-        /*
-        * @Nom : gotoStation()
-        * @Brief : 
-        * @Entré : void
-        * @Sortie : void
-        */
-        void gotoLevel(int level);
 
         /*
         * @Nom : read()
@@ -136,6 +128,75 @@ class classControl
         * @Sortie : void
         */
         void turn_station(bool direction);
+        /*
+        * @Nom : mouvement_Station()
+        * @Brief : suit la ligne jusqu'a la prochaine ligne perpendiculaire
+        * @Entré : void
+        * @Sortie : void
+        */
+        void mouvement_Station();
+       
+        /*
+        * @Nom : mouvement_Fin()
+        * @Brief : suit la ligne jusqu'a ce qu'elle n'existe plus
+        * @Entré : void
+        * @Sortie : void
+        */
+        void mouvement_Fin();
+        
+        /*
+        * @Nom : demiTour()
+        * @Brief : Fait un demi-tour 
+        * @Entré : void
+        * @Sortie : void
+        */
+        void demiTour(bool direction); 
+        
+        /*
+        * @Nom : quartTour(bool)
+        * @Brief : fait un quart de tour du sens voulu 
+        * @Entré : indique la direction a tourner
+        * @Sortie : void
+        */
+        void quartTour(bool direction);
+       
+        /*
+        * @Nom : prendreIngredient()
+        * @Brief : Prend les ingredients 
+        * @Entré : void
+        * @Sortie : void
+        */
+        void prendreIngredient();
+        /*
+        * @Nom : lacherIngredient()
+        * @Brief : Laisse tomber l'ingredient 
+        * @Entré : void
+        * @Sortie : void
+        */
+        void lacherIngredient();
+        
+        /*
+        * @Nom : retourner()
+        * @Brief : retourne à sa position initial
+        * @Entré : void
+        * @Sortie : void
+        */
+        void retourner();
+        
+        /*@Nom : allerPorter(bool)
+        * @Brief : envoi les ingredients a la drop 
+        * @Entré : indique la direction qu'il doit aller
+        * @Sortie : void
+        */
+        void allerPorter(bool direction);
+        
+        /*
+        * @Nom : bouletteStation()
+        * @Brief : Handle la boulette de son arrivé au poele a la drop
+        * @Entré : void
+        * @Sortie : void
+        */
+        void bouletteStation();
 
         /// --- GESTION DE LA MANETTE ---///
 
@@ -238,69 +299,8 @@ class classControl
         * @Sortie : void
         */
         void print_values();
-         /*
-        * @Nom : mouvement_Station()
-        * @Brief : suit la ligne jusqu'a la prochaine ligne perpendiculaire
-        * @Entré : void
-        * @Sortie : void
-        */
-        void mouvement_Station();
-         /*
-        * @Nom : mouvement_Fin()
-        * @Brief : suit la ligne jusqu'a ce qu'elle n'existe plus
-        * @Entré : void
-        * @Sortie : void
-        */
-        void mouvement_Fin();
-         /*
-        * @Nom : demiTour()
-        * @Brief : Fait un demi-tour 
-        * @Entré : void
-        * @Sortie : void
-        */
-        void demiTour(); 
-        /*
-        * @Nom : quartTour(bool)
-        * @Brief : fait un quart de tour du sens voulu 
-        * @Entré : indique la direction a tourner
-        * @Sortie : void
-        */
-        void quartTour(bool direction);
-        /*
-        * @Nom : prendreIngredient()
-        * @Brief : Prend les ingredients 
-        * @Entré : void
-        * @Sortie : void
-        */
-        void prendreIngredient();
-         /*
-        * @Nom : lacherIngredient()
-        * @Brief : Laisse tomber l'ingredient 
-        * @Entré : void
-        * @Sortie : void
-        */
-        void lacherIngredient();
-         /*
-        * @Nom : retourner()
-        * @Brief : retourne à sa position initial
-        * @Entré : void
-        * @Sortie : void
-        */
-        void retourner();
         
-        /*@Nom : allerPorter(bool)
-        * @Brief : envoi les ingredients a la drop 
-        * @Entré : indique la direction qu'il doit aller
-        * @Sortie : void
-        */
-        void allerPorter(bool direction);
-         /*
-        * @Nom : bouletteStation()
-        * @Brief : Handle la boulette de son arrivé au poele a la drop
-        * @Entré : void
-        * @Sortie : void
-        */
-        void bouletteStation();
+        
 };
 
 //FONCTIONS DEFINITION
@@ -381,6 +381,7 @@ void classControl::refresh_LCD()
     else
         refresh_setup();
 }
+
 void classControl::refresh_main()
 {
     DISPLAY_Clear();
@@ -554,9 +555,12 @@ void classControl::calibration()
 
 void classControl::burger1()
 {
-    pince(false);
-    delay(500);
-    pince(true);
+    mouvement(Pain);
+    fini=false;
+    mouvement(Boulette);
+    fini=false;
+    mouvement(Pain);
+    fini=false;
 }
 
 void classControl::burger2()
@@ -575,7 +579,7 @@ void classControl::burger3()
     fini=false;
     mouvement(Boulette);
     fini=false;
-    mouvement(Fromage);
+    mouvement(Boulette);
     fini=false;
     mouvement(Pain);
     fini=false;
@@ -614,7 +618,7 @@ void classControl::mouvement(int bonneStation)
                 {
                     turn_station(direction);
                     mouvement_Station();
-                    if(bonneStation<5)         //Ingredients
+                    if(bonneStation<5&&bonneStation!=Boulette)         //Ingredients
                     {
                         prendreIngredient();
                         allerPorter(direction);
@@ -622,7 +626,7 @@ void classControl::mouvement(int bonneStation)
                     else if(bonneStation==Boulette)         //Boulette
                     {
                         prendreIngredient();
-                        demiTour();
+                        demiTour(true);
                         mouvement_Station();
                         turn_Sort_station(direction);
                         mouvement(Poele);
@@ -748,11 +752,11 @@ void classControl::lacherIngredient()
 
 void classControl::retourner()
 {
-    demiTour();
+    demiTour(true);
     mouvement_Station();
     turn_Sort_station(true);
     mouvement_Fin();//Retourne sur la ligne principal
-    demiTour();
+    demiTour(true);
     //réinitialise les variables pour la prochaine commande
     fini =true; 
     station = -1;
@@ -761,36 +765,36 @@ void classControl::retourner()
 
 void classControl::allerPorter(bool direction)
 {
-    demiTour();
+    demiTour(true);
     mouvement_Station();
     turn_Sort_station(direction);
     mouvement(Drop);//Avance a la chute
 }
 
-void classControl::demiTour()
+void classControl::demiTour(bool direction)
 {
-    MOTOR_SetSpeed(1,-0.15);
-    MOTOR_SetSpeed(0,-0.15);
+    MOTOR_SetSpeed(direction,-0.15);
+    MOTOR_SetSpeed(!direction,-0.15);
     delay(750);
-    ENCODER_Reset(0);
-    ENCODER_Reset(1);
-  while(89>ENCODER_Read(0)*0.023038563||-89<ENCODER_Read(1)*0.023038563)
+    ENCODER_Reset(!direction);
+    ENCODER_Reset(direction);
+  while(89>ENCODER_Read(!direction)*0.023038563||-89<ENCODER_Read(direction)*0.023038563)
   {
-    if(89>ENCODER_Read(0)*0.023038563)//tourne le moteur 1 tant qu'il ne fait pas 90 degree
+    if(89>ENCODER_Read(!direction)*0.023038563)//tourne le moteur 1 tant qu'il ne fait pas 90 degree
     {
-      MOTOR_SetSpeed(0,0.15);
+      MOTOR_SetSpeed(!direction,0.15);
     }
     else
-      MOTOR_SetSpeed(0,0);
-    if(-89<ENCODER_Read(1)*0.023038563)//tourne le moteur 0 tant qu'il ne fait pas 90 degree
+      MOTOR_SetSpeed(!direction,0);
+    if(-89<ENCODER_Read(direction)*0.023038563)//tourne le moteur 0 tant qu'il ne fait pas 90 degree
     {
-      MOTOR_SetSpeed(1,-0.1495);
+      MOTOR_SetSpeed(direction,-0.1495);
     }
     else
-      MOTOR_SetSpeed(1,0);
+      MOTOR_SetSpeed(direction,0);
   }
-  MOTOR_SetSpeed(1,0);
-  MOTOR_SetSpeed(0,0);
+  MOTOR_SetSpeed(direction,0);
+  MOTOR_SetSpeed(!direction,0);
 }
 
 void classControl::quartTour(bool direction)
@@ -895,6 +899,7 @@ void classControl::mouvement_Station()
         }
     }
 }
+
 void classControl::bouletteStation()
 {
     pince(true);//ouvre
@@ -920,10 +925,18 @@ void classControl::bouletteStation()
     delay(5000);   //Attend 5 secondes
     mouvement_Station();
     prendreIngredient();
-    demiTour();  //Retourne
-    mouvement_Station();//bouge a la ligne de fin de la poele
-    mouvement_Station();//bouge a la ligne principal
-    mouvement_Station();//bouge a la ligne de debut de la drop
+    demiTour(false);  //Retourne
+    MOTOR_SetSpeed(0,0.15);
+    MOTOR_SetSpeed(1,0.15);
+    while(read()==7)
+    delay(100);
+    while(read()!=7){}
+    while(read()==7)
+    delay(100);
+    while(read()!=7){}//bouge a la ligne de fin de la poele
+    while(read()==7)
+    delay(100);
+    while(read()!=7){}
     mouvement_Station();//bouge a la drop
     lacherIngredient();
     retourner();

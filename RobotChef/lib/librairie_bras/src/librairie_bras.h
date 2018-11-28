@@ -41,7 +41,7 @@ void flip_bras(bool p)
     SERVO_Enable(0);
     if(p)
     {
-        SERVO_SetAngle(0,123);
+        SERVO_SetAngle(0,119);
     }
     else
     {
