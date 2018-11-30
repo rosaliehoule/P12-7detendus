@@ -569,6 +569,8 @@ void classControl::burger2()
     fini=false;
     mouvement(Boulette);
     fini=false;
+    mouvement(Boulette);
+    fini=false;
     mouvement(Pain);
     fini=false;
 }
@@ -579,7 +581,7 @@ void classControl::burger3()
     fini=false;
     mouvement(Boulette);
     fini=false;
-    mouvement(Boulette);
+    mouvement(Pain);
     fini=false;
     mouvement(Pain);
     fini=false;
@@ -835,12 +837,10 @@ void classControl::mouvement_Fin()
         }
         else if (capteurs == 6||capteurs==4)//Est décalé vers la gauche
         {
-            flag = false;
             alignement_d();
         }
         else if (capteurs == 3||capteurs==1)//Est décalé vers la droite
         {
-            flag = false;
             alignement_g();
         }
         else if (capteurs == 7 && flag == false)//Est à la ligne
